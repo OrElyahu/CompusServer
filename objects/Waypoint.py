@@ -17,10 +17,10 @@ class Waypoint:
         self._neighbors_views = neighbors_views if neighbors_views is not None \
             else {Direction.UP: None, Direction.DOWN: None, Direction.LEFT: None, Direction.RIGHT: None}
 
-    def getId(self):
+    def get_id(self):
         return self._id
 
-    def setId(self, waypoint_id):
+    def set_id(self, waypoint_id):
         self._id = waypoint_id
 
     def get_neighbor_views(self):
