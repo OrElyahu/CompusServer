@@ -1,45 +1,72 @@
-import Waypoint
 import Path
-from enum import Enum
-
-
-class Direction(Enum):
-    UP = 0
-    RIGHT = 1
-    DOWN = 2
-    LEFT = 3
+import Waypoint
+from objects.Utils import opposite_dir, Direction
 
 
 class Area:
 
-    def __init__(self, area_id: int, wps: dict = None, paths: dict = None):
+    def __init__(self, area_id: str, wps_neighs: dict = None, wps: dict = None, paths: dict = None):
         self._area_id = area_id
-        self._wps = dict if wps is not None else {}
+        self._wps_neighs = wps_neighs if wps_neighs is not None else {}
+        self._wps = wps if wps is not None else {}
         self._paths = paths if paths is not None else {}
 
     def get_area_id(self):
         return self._area_id
 
-    def set_area_id(self, area_id: int):
+    def set_area_id(self, area_id: str):
         self._area_id = area_id
 
-    def get_waypoints(self):
+    def get_wps_neighs(self):
+        return self._wps_neighs
+
+    def set_wps_neighs(self, wps_neighbors: dict):
+        self._wps_neighs = wps_neighbors
+
+    def get_wps(self):
         return self._wps
 
-    def set_waypoints(self, wps: dict):
+    def set_wps(self, wps: dict):
         self._wps = wps
 
-    def create_wp(self, wp):
-        if wp not in self._wps.keys():
-            self._wps[wp] = ([None, None, None, None])
+    def get_paths(self):
+        return self._paths
 
-    def add_oneway_connection(self, wp_src_id, wp_dst_id, direction, path: Path):
-        src_ref = self._wps.get(wp_src_id)
-        dst_ref = self._wps.get(wp_dst_id)
-        if src_ref and dst_ref is not None:
-            src_ref[direction] = path
+    def set_paths(self, paths: dict):
+        self._paths = paths
 
-    def add_connection(self, wp_src_id, wp_dst_id, direction, path: Path):
-        self.add_oneway_connection(wp_src_id, wp_dst_id, direction, path)
-        self.add_oneway_connection(wp_dst_id, wp_src_id, (direction + 2) % len(Direction), path)
+    def add_wp(self, wp: Waypoint):
+        _id = wp.get_id
+        if _id not in self._wps_neighs.keys():
+            self._wps[_id] = wp
+            self._wps_neighs[_id] = [None, None, None, None]
+            # TODO: obtain images from DB to values?
 
+    def add_oneway_connection(self, wp_src_id, wp_dst_id, direction: Direction, path: Path):
+        if wp_src_id and wp_dst_id in self._wps_neighs.keys():
+            self._wps_neighs[wp_src_id][direction.value] = wp_dst_id
+            self._paths[wp_src_id + '_' + wp_dst_id] = path
+
+    def add_connection(self, wp_src_id, wp_dst_id, direction: Direction, path: Path):
+        if wp_src_id and wp_dst_id in self._wps_neighs.keys():
+            self.add_oneway_connection(wp_src_id, wp_dst_id, direction, path)
+            self.add_oneway_connection(wp_dst_id, wp_src_id, opposite_dir(direction), path)
+
+    def del_oneway_connection(self, wp_src_id, wp_dst_id):
+        if wp_src_id and wp_dst_id in self._wps.keys():
+            self._paths.pop(wp_src_id + '_' + wp_dst_id, None)
+            src_neighs = self._wps_neighs[wp_src_id]
+            dst_neighs = self._wps_neighs[wp_dst_id]
+            src_neighs[src_neighs.index(wp_dst_id)] = None
+            dst_neighs[dst_neighs.index(wp_src_id)] = None
+
+    def del_connection(self, wp_src_id, wp_dst_id):
+        self.del_oneway_connection(wp_src_id, wp_dst_id)
+        self.del_oneway_connection(wp_dst_id, wp_src_id)
+
+    def remove_wp(self, wp_id):
+        if wp_id in self._wps.keys():
+            for dir_index, _id in enumerate(self._wps_neighs[wp_id]):
+                if _id:
+                    self.del_connection(wp_id, _id)
+            del self._wps[wp_id]
