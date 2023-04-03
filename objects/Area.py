@@ -4,6 +4,12 @@ from objects.Utils import opposite_dir, Direction
 
 
 class Area:
+    """'
+    _area_is typed str
+    _wps_neighs typed dict(str:list[4 strings]) {'202':['203',None,None,'204'] }
+    _wps typed dict(str:Waypoint) {'202':Waypoint}
+    _paths typed dict(str:path) {'205_204':Path}
+    ''"""
 
     def __init__(self, area_id: str, wps_neighs: dict = None, wps: dict = None, paths: dict = None):
         self._area_id = area_id
@@ -70,3 +76,6 @@ class Area:
                 if _id:
                     self.del_connection(wp_id, _id)
             del self._wps[wp_id]
+
+    def __eq__(self, obj):
+        return self._area_id == obj.get_area_id

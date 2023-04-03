@@ -3,7 +3,6 @@ import pickle
 from typing import List
 
 
-
 class Waypoint:
     def __init__(self, waypoint_id: str = None, poi: str = None):
         self._id = waypoint_id
