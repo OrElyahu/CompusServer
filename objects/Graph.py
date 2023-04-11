@@ -1,3 +1,5 @@
+from google.type.latlng_pb2 import LatLng
+
 from objects.Area import Area
 import heapq
 
@@ -12,8 +14,9 @@ class Graph:
     _wps_neighs typed dict(str:list[4 strings]) {'202':['203',None,None,'204'] }
     _paths typed dict(str:path) {'205_204':Path}
     ''"""
-    def __init__(self, areas: list, wps_neighs: dict = None, paths: dict = None):
+    def __init__(self, areas: list, wps_lat_lon: dict = None, wps_neighs: dict = None, paths: dict = None):
         self._areas = areas if areas is not None else []
+        self._wps_lat_lon = wps_lat_lon if wps_lat_lon is not None else {}
         self._wps_neighs = wps_neighs if wps_neighs is not None else {}
         self._paths = paths if paths is not None else {}
 
@@ -22,6 +25,12 @@ class Graph:
 
     def set_areas(self, areas: list):
         self._areas = areas
+
+    def get_wps_lat_lon(self):
+        return self._wps_lat_lon
+
+    def set_wps_lat_lon(self, wps_lat_lon: dict):
+        self._wps_lat_lon = wps_lat_lon
 
     def get_wps_neighs(self):
         return self._wps_neighs
@@ -34,6 +43,13 @@ class Graph:
 
     def set_paths(self, paths: dict):
         self._paths = paths
+
+    def add_wp_lat_lon(self, wp_id, lat_lon: LatLng):
+        self._wps_lat_lon[wp_id] = lat_lon
+
+    def remove_wp_lat_lon(self, wp_id):
+        if wp_id in self._wps_lat_lon.keys():
+            del self._wps_lat_lon[wp_id]
 
     def add_area(self, area: Area):
         if area not in self._areas:
