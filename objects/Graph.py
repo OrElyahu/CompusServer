@@ -78,7 +78,21 @@ class Graph:
                 area.remove_wp(wp_id)
                 break
 
+    """'
+    @Input: 2 WPs ids : start_id, end_id
+    @Output: a list of WPs from start to the end with the shortest time estimation,
+            None if path doesn't exist
+    
+    This algorithm try to find the quickest path to reach from start WP to end WP.
+    It begins with the start WP, and maps all of its neighbors to the distance between the start and the neighbors.
+    It continues with a loop until end WP is found. (Case not found - the algorithm will return None)
+    ''"""
     def shortest_path(self, start_id, end_id):
+        """'
+            distances: a dictionary that assigns infinity value to each wp_id, except the start_id sets to zero.
+            heap: is a priority queue to all the wp that haven't been visited, and their distance from the start WP.
+            visited: is a set contain all the visited WPs.
+        ''"""
         distances = {}
         for area in self._areas:
             for wp_id in area.get_wps().keys():
@@ -87,6 +101,10 @@ class Graph:
         heap = [(0, start_id)]
         visited = set()
 
+        """'
+            While heap isn't empty there are still WP that can lead to shorter path.
+            Case WP is in visited set - we skip to the next iteration.
+        ''"""
         while heap:
             (curr_distance, curr_wp_id) = heapq.heappop(heap)
             if curr_wp_id in visited:
@@ -96,6 +114,12 @@ class Graph:
             curr_area = self.get_area_by_wp_id(curr_wp_id)
             curr_wp = curr_area.get_wps()[curr_wp_id]
 
+            """'
+                If we reached to the end WP, according to heap - the priority is the shortest,
+                therefore this is the quickest path from start to end.
+                Let build path from the end, to the start, using the distance dictionary, reverse it and
+                return the list.
+            ''"""
             if curr_wp_id == end_id:
                 path = []
                 while curr_wp.get_id() != start_id:
@@ -105,6 +129,11 @@ class Graph:
                 path.reverse()
                 return path
 
+            """'
+                Explore every neighbor of the current WP, and calculate their distances.
+                If the distance is shorter from what appears in the distance dictionary - replace it, and
+                add it to heap.
+            ''"""
             neighs_id = self._wps_neighs[curr_wp_id]
             for _id in neighs_id:
                 if _id and _id not in visited:
@@ -113,6 +142,9 @@ class Graph:
                         distances[_id] = (new_distance, curr_wp)
                         heapq.heappush(heap, (new_distance, _id))
 
+        """'
+            Case heap is empty and end WP wasn't found - return None
+        ''"""
         return None
 
     def get_area_by_wp_id(self, waypoint_id):
