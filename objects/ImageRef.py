@@ -25,5 +25,5 @@ class ImageRef:
         image_content = response.content
         image_bytes = BytesIO(image_content)
         img = Image.open(image_bytes)
-        # img.show() TODO: fix implement
+        img.show() # TODO: fix implement
 
