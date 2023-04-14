@@ -1,17 +1,12 @@
 import heapq
 
-from objects.Path import Path
+from objects.Path import Path, A11y
 from objects.Place import Place
 from objects.Utils import Direction, opposite_dir
 from objects.Waypoint import Waypoint
 
 
 class Graph:
-    """'
-    _areas list contain all areas
-    _wps_neighs typed dict(str:list[4 strings]) {'202':['203',None,None,'204'] }
-    _paths typed dict(str:path) {'205_204':Path}
-    ''"""
 
     def __init__(self, places: dict, wps: dict = None, wps_neighs: dict = None, paths: dict = None):
         self._places = places if places is not None else {}
@@ -98,15 +93,14 @@ class Graph:
     It continues with a loop until end WP is found. (Case not found - the algorithm will return None)
     ''"""
 
-    def shortest_path(self, start_id, end_id):
+    def shortest_path(self, start_id, end_id, mode_of_transport: A11y = A11y.WALKABLE):
         """'
             distances: a dictionary that assigns infinity value to each wp_id, except the start_id sets to zero.
             heap: is a priority queue to all the wp that haven't been visited, and their distance from the start WP.
             visited: is a set contain all the visited WPs.
         ''"""
-        distances = self._wps.copy()
-        for item in distances.items():
-            item = float('inf')
+        accessible_paths = {_id: path for _id, path in self._paths.items() if mode_of_transport in path.a11y}
+        distances = {_id: float('inf') for _id, wp in self._wps.items()}
         distances[start_id] = 0
         heap = [(0, start_id)]
         visited = set()
@@ -144,10 +138,11 @@ class Graph:
                 If the distance is shorter from what appears in the distance dictionary - replace it, and
                 add it to heap.
             ''"""
-            neighs_id = self._wps_neighs[curr_wp_id]
-            for _id in neighs_id:
-                if _id and _id not in visited:
-                    new_distance = distances[curr_wp_id] + self._paths[curr_wp_id + '_' + _id].get_time()
+            neigh_ids = self._wps_neighs[curr_wp_id]
+            for _id in neigh_ids:
+                path_id = f'{curr_wp_id}_{_id}'
+                if _id and _id not in visited and path_id in accessible_paths:
+                    new_distance = distances[curr_wp_id] + accessible_paths[path_id].get_time()
                     if new_distance < distances[_id]:
                         distances[_id] = (new_distance, curr_wp_id)
                         heapq.heappush(heap, (new_distance, _id))
