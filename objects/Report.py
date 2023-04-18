@@ -2,44 +2,50 @@ import pickle
 
 
 class Report:
-    def __init__(self):
-        self._reporter_email = None
-        self._text = None
-        self._uploaded_img_name = None
-        self._waypoint_id = None
-        self._direction = None
 
-    # setter
-    def set_reporter_email(self, reporter_email):
+    def __init__(self, report_id, reporter_email, text, image, wp_id, direction):
+        self._report_id = report_id
         self._reporter_email = reporter_email
-
-    def set_text(self, text):
         self._text = text
-
-    def set_image_name(self, image_name):
-        self._uploaded_img_name = image_name
-
-    def set_waypoint_id(self, waypoint_id):
-        self._waypoint_id = waypoint_id
-
-    def set_direction(self, direction):
+        self._image = image
+        self._wp_id = wp_id
         self._direction = direction
 
-    # getter
+    def get_report_id(self):
+        return self._report_id
+
+    def set_report_id(self, report_id):
+        self._report_id = report_id
+
     def get_reporter_email(self):
         return self._reporter_email
+
+    def set_reporter_email(self, reporter_email):
+        self._reporter_email = reporter_email
 
     def get_text(self):
         return self._text
 
-    def get_image_name(self):
-        return self._uploaded_img_name
+    def set_text(self, text):
+        self._text = text
 
-    def get_waypoint_id(self):
-        return self._waypoint_id
+    def get_image(self):
+        return self._image
+
+    def set_image(self, image):
+        self._image = image
+
+    def get_wp_id(self):
+        return self._wp_id
+
+    def set_wp_id(self, wp_id):
+        self._wp_id = wp_id
 
     def get_direction(self):
         return self._direction
+
+    def set_direction(self, direction):
+        self._direction = direction
 
     # serialization
     def serialize(self):
