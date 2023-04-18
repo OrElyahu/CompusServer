@@ -6,7 +6,7 @@ from objects.Area import Area
 class Place:
     def __init__(self, place_name: str, areas: List[Area] = None):
         self._place_name = place_name
-        self._areas = areas if areas is not None else []
+        self._areas = areas or []
 
     def get_place_name(self):
         return self._place_name

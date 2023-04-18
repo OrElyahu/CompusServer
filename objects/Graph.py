@@ -9,12 +9,12 @@ from objects.Waypoint import Waypoint
 
 class Graph:
 
-    def __init__(self, graph_name, places: List[Place], wps: dict = None, wps_neighs: dict = None, paths: dict = None):
+    def __init__(self, graph_name, places: List[Place], wps: dict = None, wp_neighs: dict = None, paths: dict = None):
         self._graph_name = graph_name
-        self._places = places if places is not None else []
-        self._wps = wps if wps is not None else {}
-        self._wps_neighs = wps_neighs if wps_neighs is not None else {}
-        self._paths = paths if paths is not None else {}
+        self._places = places or []
+        self._wps = wps or {}
+        self._wp_neighs = wp_neighs or {}
+        self._paths = paths or {}
 
     def get_graph_name(self):
         return self._graph_name
@@ -34,11 +34,11 @@ class Graph:
     def set_wps(self, wps: dict):
         self._wps = wps
 
-    def get_wps_neighs(self):
-        return self._wps_neighs
+    def get_wp_neighs(self):
+        return self._wp_neighs
 
-    def set_wps_neighs(self, wps_neighbors: dict):
-        self._wps_neighs = wps_neighbors
+    def set_wp_neighs(self, wp_neighbors: dict):
+        self._wp_neighs = wp_neighbors
 
     def get_paths(self):
         return self._paths
@@ -60,29 +60,29 @@ class Graph:
         if _id not in self._wps:
             self._places[wp.get_place_id()].get_areas()[wp.get_area_id()].add_wp_id(_id)
             self._wps[_id] = wp
-            self._wps_neighs[_id] = [None, None, None, None]
+            self._wp_neighs[_id] = [None, None, None, None]
 
     def remove_wp(self, wp_id):
         if wp_id in self._wps:
             wp = self._wps[wp_id]
             self._places[wp.get_place_id()].get_areas()[wp.get_area_id()].remove_wp_id(wp_id)
-            [self.del_connection(wp_id, _id) for _id in self._wps_neighs[wp_id] if _id]
+            [self.del_connection(wp_id, _id) for _id in self._wp_neighs[wp_id] if _id]
             self._wps.pop(wp_id, None)
 
     def add_oneway_connection(self, wp_src_id, wp_dst_id, direction: Direction, path: Path):
-        if wp_src_id and wp_dst_id in self._wps_neighs:
-            self._wps_neighs[wp_src_id][direction.value] = wp_dst_id
+        if wp_src_id and wp_dst_id in self._wp_neighs:
+            self._wp_neighs[wp_src_id][direction.value] = wp_dst_id
             self._paths[wp_src_id + '_' + wp_dst_id] = path
 
     def add_connection(self, wp_src_id, wp_dst_id, direction: Direction, path: Path):
-        if wp_src_id and wp_dst_id in self._wps_neighs:
+        if wp_src_id and wp_dst_id in self._wp_neighs:
             self.add_oneway_connection(wp_src_id, wp_dst_id, direction, path)
             self.add_oneway_connection(wp_dst_id, wp_src_id, opposite_dir(direction), path)
 
     def del_oneway_connection(self, wp_src_id, wp_dst_id):
-        if wp_src_id in self._wps_neighs:
+        if wp_src_id in self._wp_neighs:
             self._paths.pop(wp_src_id + '_' + wp_dst_id, None)
-            src_neighs = self._wps_neighs[wp_src_id]
+            src_neighs = self._wp_neighs[wp_src_id]
             try:
                 src_neighs[src_neighs.index(wp_dst_id)] = None
             except ValueError:
@@ -145,7 +145,7 @@ class Graph:
                 If the distance is shorter from what appears in the distance dictionary - replace it, and
                 add it to heap.
             ''"""
-            neigh_ids = self._wps_neighs[curr_wp_id]
+            neigh_ids = self._wp_neighs[curr_wp_id]
             for _id in neigh_ids:
                 path_id = f'{curr_wp_id}_{_id}'
                 if _id and _id not in visited and path_id in accessible_paths:

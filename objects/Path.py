@@ -13,7 +13,7 @@ class A11y(Enum):
 class Path:
     def __init__(self, time=None, a11y: List[A11y] = None):
         self._time = time
-        self._a11y = a11y if a11y is not None else [A11y.WALKABLE, A11y.WHEEL_CHAIR]
+        self._a11y = a11y or [A11y.WALKABLE, A11y.WHEEL_CHAIR]
 
     def get_time(self):
         return self._time
