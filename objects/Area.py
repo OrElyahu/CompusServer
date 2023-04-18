@@ -1,7 +1,14 @@
 class Area:
-    def __init__(self, area_map, wps_ids: set = None):
+    def __init__(self, area_id, area_map, wps_ids: set = None):
+        self._area_id = area_id
         self._area_map = area_map
         self._wps_ids = wps_ids if wps_ids is not None else set()
+
+    def get_area_id(self):
+        return self._area_id
+
+    def set_area_id(self, area_id):
+        self._area_id = area_id
 
     def get_area_map(self):
         return self._area_map
@@ -20,3 +27,6 @@ class Area:
 
     def remove_wp_id(self, wp_id):
         self._wps_ids.discard(wp_id)
+
+    def __eq__(self, obj):
+        return isinstance(obj, Area) and self._area_id == obj._area_id

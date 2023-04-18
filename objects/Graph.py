@@ -1,4 +1,5 @@
 import heapq
+from typing import List
 
 from objects.Path import Path, A11y
 from objects.Place import Place
@@ -8,16 +9,23 @@ from objects.Waypoint import Waypoint
 
 class Graph:
 
-    def __init__(self, places: dict, wps: dict = None, wps_neighs: dict = None, paths: dict = None):
-        self._places = places if places is not None else {}
+    def __init__(self, graph_name, places: List[Place], wps: dict = None, wps_neighs: dict = None, paths: dict = None):
+        self._graph_name = graph_name
+        self._places = places if places is not None else []
         self._wps = wps if wps is not None else {}
         self._wps_neighs = wps_neighs if wps_neighs is not None else {}
         self._paths = paths if paths is not None else {}
 
+    def get_graph_name(self):
+        return self._graph_name
+
+    def set_graph_name(self, graph_name):
+        self._graph_name = graph_name
+
     def get_places(self):
         return self._places
 
-    def set_places(self, places: dict):
+    def set_places(self, places: List[Place]):
         self._places = places
 
     def get_wps(self):
@@ -39,12 +47,13 @@ class Graph:
         self._paths = paths
 
     def add_place(self, place: Place):
-        place_id = place.get_place_name()
-        if place_id not in self._places:
-            self._places[place_id] = place
+        for p in self._places:
+            if p.__eq__(place):
+                return
+        self._places.append(place)
 
     def remove_place(self, place_name):
-        self._places.pop(place_name, None)
+        self._places = [place for place in self._places if place.get_place_name() != place_name]
 
     def add_wp(self, wp: Waypoint):
         _id = wp.get_id()
@@ -115,8 +124,6 @@ class Graph:
                 continue
 
             visited.add(curr_wp_id)
-            # curr_area = self.get_area_by_wp_id(curr_wp_id)
-            # curr_wp = curr_area.get_wps()[curr_wp_id]
 
             """'
                 If we reached to the end WP, according to heap - the priority is the shortest,
@@ -151,3 +158,6 @@ class Graph:
             Case heap is empty and end WP wasn't found - return None
         ''"""
         return None
+
+    def __eq__(self, obj):
+        return isinstance(obj, Graph) and self._graph_name == obj._graph_name
