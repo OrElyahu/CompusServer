@@ -11,7 +11,7 @@ class A11y(Enum):
 
 
 class Path:
-    def __init__(self, time=None, a11y: List[A11y] = None):
+    def __init__(self, time, a11y: List[A11y] = None):
         self._time = time
         self._a11y = a11y or [A11y.WALKABLE, A11y.WHEEL_CHAIR]
 
@@ -26,6 +26,9 @@ class Path:
 
     def set_a11y(self, a11y):
         self._a11y = a11y
+
+    def __str__(self):
+        return f'time={self._time}, a11y={self._a11y}'
 
     # serialization
     def serialize(self):
