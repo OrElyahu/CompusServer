@@ -9,12 +9,14 @@ from objects.Waypoint import Waypoint
 
 class Graph:
 
-    def __init__(self, graph_name, places: List[Place], wps: dict = None, wp_neighs: dict = None, paths: dict = None):
+    def __init__(self, graph_name, places: List[Place], wps: dict = None, wp_neighs: dict = None,
+                 paths: dict = None, poi_wps: dict = None):
         self._graph_name = graph_name
         self._places = places or []
         self._wps = wps or {}
         self._wp_neighs = wp_neighs or {}
         self._paths = paths or {}
+        self._poi_wps = poi_wps or {}
 
     def get_graph_name(self):
         return self._graph_name
@@ -45,6 +47,19 @@ class Graph:
 
     def set_paths(self, paths: dict):
         self._paths = paths
+
+    def get_poi_wps(self):
+        return self._poi_wps
+
+    def set_poi_wps(self, poi_wps: dict):
+        self._poi_wps = poi_wps
+
+    def add_poi_wp(self, poi, wp_id):
+        if poi not in self._poi_wps:
+            self._poi_wps[poi] = wp_id
+
+    def remove_poi_wp(self, poi):
+        self._poi_wps.pop(poi, None)
 
     def add_place(self, place: Place):
         for p in self._places:
