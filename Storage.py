@@ -1,9 +1,11 @@
 import firebase_admin
 from firebase_admin import credentials, firestore
+from google.type.latlng_pb2 import LatLng
 from pyrebase import pyrebase
 from geopy.point import Point
 
 from objects import Utils
+from objects.Area import Area
 from objects.ImageRef import ImageRef
 
 # firebase = pyrebase.initialize_app(Utils.get_config('config.json'))
@@ -57,18 +59,43 @@ cred = credentials.Certificate('admin-key.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-doc_ref = db.collection(u'sites').document('Afeka')
+col_areas = db.collection(u'sites').document('Afeka').collection('graphs')\
+            .document('Campus').collection('places').document('Ficus').collection('areas')
 
-entrances = doc_ref.get().to_dict().get('entrances')
-for entrance in entrances:
-    lat, lng = entrances[entrance].latitude, entrances[entrance].longitude
-    point = Point(latitude=lat, longitude=lng)
 
-#     lat = entrances['location-entrance'].latitude
-#     lng = entrances['location-entrance'].longitude
-#     print(f'wp_id={wp_id}, [lat,lng]={lat},{lng}')
-# print(entrances['location-entrance'])
-# lat = entrances['location-entrance'].latitude
-# print(lat)
-# lng = entrances['location-entrance'].longitude
-# print(lng)
+for doc in col_areas.stream():
+    area = doc.to_dict()
+    area['area_id'] = doc.id
+    a = Area(**area)
+    print(a)
+
+
+
+# entrances = doc_ref.get().to_dict().get('entrances')
+# graph = doc_ref.collection('graphs').document('Campus')
+# place = graph.collection('places').document('Ficus')
+# place_fields = place.get().to_dict()
+# place_subcols = {c.id: c for c in place.collections()}
+# print(place_fields)
+# print(place_subcols)
+# if 'areas' in place_subcols:
+#     areas = place.collection('areas')
+#     print(areas)
+
+
+
+
+# area = col_ref.document('F1').get().to_dict()
+# if 'area_map' in area:
+#     print("exists")
+# else:
+#     print("not exist")
+# area_fields = area.get().to_dict()
+# area_fields['area_id'] = area.id
+# a = Area(**area_fields)
+# print(area_fields)
+
+
+
+
+

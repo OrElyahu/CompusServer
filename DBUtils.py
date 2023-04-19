@@ -1,5 +1,31 @@
+from objects.Area import Area
 from objects.Path import Path
 from objects.Waypoint import Waypoint
+
+
+
+
+# db.collection(u'sites').document('Afeka').collection('graphs')\
+#             .document('Campus').collection('places').document('Ficus').collection('areas')
+def des_areas(col_ref):
+    areas = []
+    for doc in col_ref.stream():
+        area = doc.to_dict()
+        area['area_id'] = doc.id
+        areas.append(Area(**area))
+    return areas
+
+
+# db.collection(u'sites').document('Afeka').collection('graphs')\
+#             .document('Campus')
+def des_wp_neighs(doc_refs):
+    return doc_refs.get().to_dict()['wp_neighs']
+
+
+# db.collection(u'sites').document('Afeka').collection('graphs')\
+#             .document('Campus')
+def des_poi_wps(doc_refs):
+    return doc_refs.get().to_dict()['poi_wps']
 
 
 # db.collection(u'sites').document('Afeka').collection(u'graphs'). \
