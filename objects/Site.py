@@ -47,3 +47,9 @@ class Site:
 
     def __eq__(self, obj):
         return isinstance(obj, Site) and self._site_name == obj._site_name
+
+    def __str__(self):
+        parts = {'Entrances': '\n'.join([f'wp_id: {wp}, {str(latlng)}' for wp, latlng in self._entrances.items()]),
+                 'Graphs': '\n'.join([str(graph) for graph in self._graphs])}
+        parts_str = '\n'.join([f'{key}:\n{value}' for key, value in parts.items()])
+        return f'Site: {self._site_name} \n{parts_str}'

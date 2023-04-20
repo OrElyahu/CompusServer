@@ -26,7 +26,7 @@ class Waypoint:
         self._area_id = area_id
 
     def __str__(self):
-        return f'id={self._id}, place={self._place_id}, area={self._area_id}'
+        return f'Waypoint: id={self._id}, place={self._place_id}, area={self._area_id}'
 
     def __eq__(self, obj):
         return isinstance(obj, Waypoint) and obj._id == self._id

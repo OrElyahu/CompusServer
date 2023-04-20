@@ -33,5 +33,8 @@ class Place:
         return isinstance(obj, Place) and self._place_name == obj._place_name
 
     def __str__(self):
-        return f'place_name={self._place_name}, areas={" ".join([str(area) for area in self._areas])}'
+        if not self._areas:
+            return f'Place: {self._place_name} \nAreas: None'
+        areas_str = '\n'.join([str(area) for area in self._areas])
+        return f'Place: {self._place_name} \nAreas:\n{areas_str}'
 

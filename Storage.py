@@ -3,7 +3,7 @@ from firebase_admin import credentials, firestore
 from google.type.latlng_pb2 import LatLng
 from pyrebase import pyrebase
 
-from DBUtils import des_places
+from DBUtils import des_places, des_graphs, des_site
 from objects import Utils
 from objects.Area import Area
 from objects.ImageRef import ImageRef
@@ -59,13 +59,23 @@ cred = credentials.Certificate('admin-key.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-
+# make a multiline comment
+"""
 col_places = db.collection(u'sites').document('Afeka').collection('graphs')\
             .document('Campus').collection('places')
 places = des_places(col_places)
 for place in places:
     print(place)
+"""
+"""
+col_graphs = db.collection(u'sites').document('Afeka').collection('graphs')
+graphs = des_graphs(col_graphs)
+for graph in graphs:
+    print(graph)
+"""
 
+site = db.collection(u'sites').document('Afeka').get()
+print(des_site(site))
 
 # entrances = doc_ref.get().to_dict().get('entrances')
 # graph = doc_ref.collection('graphs').document('Campus')

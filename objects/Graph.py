@@ -176,3 +176,13 @@ class Graph:
 
     def __eq__(self, obj):
         return isinstance(obj, Graph) and self._graph_name == obj._graph_name
+
+    def __str__(self):
+        parts = {'Places': '\n'.join([str(place) for place in self._places]),
+                 'Waypoints dict': '\n'.join([f'wp_id: {wp_id}, {str(wp)}' for wp_id, wp in self._wps.items()]),
+                 'Paths dict': '\n'.join([f'path_id: {p_id}, {str(path)}' for p_id, path in self._paths.items()]),
+                 'Waypoint Neighbors': '\n'.join([f'Neighbors: {wp_id}: {neighs}' for wp_id, neighs in self._wp_neighs.items()]),
+                 'POI to Waypoints': '\n'.join([f'POI: {poi_id}: {wp_ids}' for poi_id, wp_ids in self._poi_wps.items()])}
+        parts_str = '\n'.join([f'{key}:\n{value}' for key, value in parts.items()])
+
+        return f'Graph: {self._graph_name} \n{parts_str}'

@@ -28,7 +28,8 @@ class Path:
         self._a11y = a11y
 
     def __str__(self):
-        return f'time={self._time}, a11y={self._a11y}'
+        a11y_str = ', '.join([str(a).split('.')[1] for a in self._a11y])  # turn A11y.WALKABLE into WALKABLE
+        return f'Path: time={self._time}, a11y=[{a11y_str}]'
 
     # serialization
     def serialize(self):

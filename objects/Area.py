@@ -32,4 +32,4 @@ class Area:
         return isinstance(obj, Area) and self._area_id == obj._area_id
 
     def __str__(self):
-        return f'area_id={self._area_id}, area_map={self._area_map}, wp_ids:{self._wp_ids}'
+        return f'Area: area_id={self._area_id}, area_map={self._area_map}, wp_ids:{self._wp_ids}'
