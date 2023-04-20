@@ -117,14 +117,14 @@ class Graph:
     It continues with a loop until end WP is found. (Case not found - the algorithm will return None)
     ''"""
 
-    def shortest_path(self, start_id, end_id, mode_of_transport: A11y = A11y.WALKABLE):
+    def shortest_path(self, start_id, end_id, mode_of_transport: A11y = A11y.WALK):
         """'
             distances: a dictionary that assigns infinity value to each wp_id, except the start_id sets to zero.
             heap: is a priority queue to all the wp that haven't been visited, and their distance from the start WP.
             visited: is a set contain all the visited WPs.
         ''"""
-        accessible_paths = {_id: path for _id, path in self._paths.items() if mode_of_transport in path.a11y}
-        distances = {_id: float('inf') for _id, wp in self._wps.items()}
+        accessible_paths = {_id: path for _id, path in self._paths.items() if mode_of_transport in path.get_a11y()}
+        distances = {_id: float('inf') for _id in self._wps.keys()}
         distances[start_id] = 0
         heap = [(0, start_id)]
         visited = set()
@@ -164,7 +164,10 @@ class Graph:
             for _id in neigh_ids:
                 path_id = f'{curr_wp_id}_{_id}'
                 if _id and _id not in visited and path_id in accessible_paths:
-                    new_distance = distances[curr_wp_id] + accessible_paths[path_id].get_time()
+                    cur_dis = distances[curr_wp_id]
+                    if type(cur_dis) is tuple:
+                        cur_dis = cur_dis[0]
+                    new_distance = cur_dis + accessible_paths[path_id].get_time()
                     if new_distance < distances[_id]:
                         distances[_id] = (new_distance, curr_wp_id)
                         heapq.heappush(heap, (new_distance, _id))

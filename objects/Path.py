@@ -6,19 +6,19 @@ from typing import List
 
 
 class A11y(Enum):
-    WALKABLE = 0
-    WHEEL_CHAIR = 1
+    WALK = 0
+    WHEELCHAIR = 1
 
 
 class Path:
-    def __init__(self, time, a11y: List[A11y] = None):
+    def __init__(self, time: int, a11y: List[A11y] = None):
         self._time = time
-        self._a11y = a11y or [A11y.WALKABLE, A11y.WHEEL_CHAIR]
+        self._a11y = a11y or [A11y.WALK, A11y.WHEELCHAIR]
 
-    def get_time(self):
+    def get_time(self) -> int:
         return self._time
 
-    def set_time(self, time):
+    def set_time(self, time:int):
         self._time = time
 
     def get_a11y(self):
