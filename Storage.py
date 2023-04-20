@@ -2,7 +2,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from google.type.latlng_pb2 import LatLng
 from pyrebase import pyrebase
-from geopy.point import Point
+
 
 from objects import Utils
 from objects.Area import Area
