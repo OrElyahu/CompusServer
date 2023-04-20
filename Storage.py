@@ -2,8 +2,8 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from google.type.latlng_pb2 import LatLng
 from pyrebase import pyrebase
-from geopy.point import Point
 
+from DBUtils import des_places
 from objects import Utils
 from objects.Area import Area
 from objects.ImageRef import ImageRef
@@ -59,16 +59,12 @@ cred = credentials.Certificate('admin-key.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-col_areas = db.collection(u'sites').document('Afeka').collection('graphs')\
-            .document('Campus').collection('places').document('Ficus').collection('areas')
 
-
-for doc in col_areas.stream():
-    area = doc.to_dict()
-    area['area_id'] = doc.id
-    a = Area(**area)
-    print(a)
-
+col_places = db.collection(u'sites').document('Afeka').collection('graphs')\
+            .document('Campus').collection('places')
+places = des_places(col_places)
+for place in places:
+    print(place)
 
 
 # entrances = doc_ref.get().to_dict().get('entrances')

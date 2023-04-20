@@ -31,3 +31,7 @@ class Place:
 
     def __eq__(self, obj):
         return isinstance(obj, Place) and self._place_name == obj._place_name
+
+    def __str__(self):
+        return f'place_name={self._place_name}, areas={" ".join([str(area) for area in self._areas])}'
+

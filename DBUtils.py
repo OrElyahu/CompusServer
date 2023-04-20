@@ -1,19 +1,36 @@
+from firebase_admin import firestore
+from google.cloud import firestore as db
+
 from objects.Area import Area
 from objects.Path import Path
+from objects.Place import Place
 from objects.Waypoint import Waypoint
-
-
 
 
 # db.collection(u'sites').document('Afeka').collection('graphs')\
 #             .document('Campus').collection('places').document('Ficus').collection('areas')
+def des_places(col_ref):
+    return [des_place(doc) for doc in col_ref.stream()]
+
+
+def des_place(place_doc: db.DocumentSnapshot):
+    place_ref = place_doc.reference
+    place = {'place_name': place_doc.id}
+    if 'areas' in [c.id for c in place_ref.collections()]:
+        place['areas'] = des_areas(place_ref.collection('areas'))
+    return Place(**place)
+
+
 def des_areas(col_ref):
-    areas = []
-    for doc in col_ref.stream():
-        area = doc.to_dict()
-        area['area_id'] = doc.id
-        areas.append(Area(**area))
-    return areas
+    return [des_area(doc) for doc in col_ref.stream()]
+
+
+def des_area(area_doc: db.DocumentSnapshot):
+    if not area_doc.exists:  # an Area object must have an area_map image
+        return None
+    area = area_doc.to_dict()
+    area['area_id'] = area_doc.id
+    return Area(**area)
 
 
 # db.collection(u'sites').document('Afeka').collection('graphs')\
