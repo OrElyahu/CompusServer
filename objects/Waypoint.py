@@ -1,3 +1,4 @@
+import json
 import pickle
 
 
@@ -33,8 +34,21 @@ class Waypoint:
 
     # serialization
     def serialize(self):
-        return pickle.dumps(self)
+        return json.dumps(self, cls=WaypointEncoder)
+
+        # return {"id": self._id, "place_id": self._place_id, "area_id": self._area_id}
+
+        # return pickle.dumps(self)
 
     @staticmethod
     def deserialize(serialized_data):
         return pickle.loads(serialized_data)
+
+
+class WaypointEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Waypoint):
+            return {
+                obj.__str__()
+            }
+        return super().default(obj)

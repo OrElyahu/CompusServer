@@ -17,7 +17,7 @@ class Site:
     def set_site_name(self, site_name):
         self._site_name = site_name
 
-    def get_graphs(self):
+    def get_graphs(self) -> List[Graph]:
         return self._graphs
 
     def set_graphs(self, graphs: List[Graph]):

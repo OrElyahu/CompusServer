@@ -189,3 +189,5 @@ class Graph:
         parts_str = '\n'.join([f'{key}:\n{value}' for key, value in parts.items()])
 
         return f'Graph: {self._graph_name} \n{parts_str}'
+
+
