@@ -123,6 +123,7 @@ class Graph:
             heap: is a priority queue to all the wp that haven't been visited, and their distance from the start WP.
             visited: is a set contain all the visited WPs.
         ''"""
+        # TODO: Change stairs to WALK only & Not accessible for WHEELCHAIR msg
         accessible_paths = {_id: path for _id, path in self._paths.items() if mode_of_transport in path.get_a11y()}
         distances = {_id: float('inf') for _id in self._wps.keys()}
         distances[start_id] = 0

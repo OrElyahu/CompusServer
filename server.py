@@ -33,7 +33,7 @@ class App(Resource):
         parser.add_argument('site_name', type=str, required=True)
         parser.add_argument('poi_start', type=str, required=True)
         parser.add_argument('poi_end', type=str, required=True)
-        parser.add_argument('a11y', type=str, default=A11y.WALK)
+        parser.add_argument('a11y', type=str, default=A11y.WALK.name)
         args = {}
         try:
             args = parser.parse_args()
@@ -43,7 +43,10 @@ class App(Resource):
         site_name = args['site_name']
         poi_start = args['poi_start']
         poi_end = args['poi_end']
-        a11y = args['a11y']
+
+        if args['a11y'] not in A11y.__members__:
+            abort(400, message=f"param {args['a11y']} is not given properly")
+        a11y = A11y[args['a11y']]
 
         if site_name not in self.sites:
             abort(404, message=f"Site : {site_name} not found")
