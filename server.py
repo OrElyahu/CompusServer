@@ -1,6 +1,6 @@
 import argparse
 
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restful import Api, Resource, reqparse, abort
 import firebase_admin
 from firebase_admin import credentials, firestore
@@ -8,10 +8,12 @@ import DBUtils
 from objects.Path import A11y
 import objects.Site
 import objects.Graph
+from objects.Waypoint import JsonEncoder
 
 # TODO : clean comments and TODOs
 
 app = Flask(__name__)
+app.json_encoder = JsonEncoder
 api = Api(app)
 cred = credentials.Certificate('admin-key.json')
 firebase_admin.initialize_app(cred)
@@ -50,7 +52,7 @@ class App(Resource):
         graphs = site.get_graphs()
         start_graph = next((graph for graph in graphs if poi_start in graph.get_poi_wps()), None)
         end_graph = next((graph for graph in graphs if poi_end in graph.get_poi_wps()), None)
-        if not start_graph  :
+        if not start_graph:
             abort(404, message=f"Point of interest: {poi_start} not found in {site_name}")
         if not end_graph:
             abort(404, message=f"Point of interest: {poi_end} not found in {site_name}")
@@ -65,7 +67,9 @@ class App(Resource):
         if not short_path:
             abort(404, message=f"Unable to find path from {poi_start} to {poi_end}")
 
-        return short_path
+        # for wp in short_path:
+        #     print(wp)
+        return jsonify(short_path)
 
 
 # class Image(Resource):

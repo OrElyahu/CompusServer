@@ -9,11 +9,10 @@ import DBUtils
 BASE = "http://127.0.0.1:5000/"
 # response = requests.get(BASE + "shortest_path?site_name=Afeka&poi_start=Class 301&poi_end=Class 302&a11y=WALK")
 response = requests.get(BASE + "shortest_path?site_name=Afeka&poi_start=Class 301&poi_end=Class 302")
+print(json.dumps(response.json(), indent=2))
 
 # waypoint = Waypoint("1", "place_1", "area_1")
 # json_data = json.dumps({"waypoint": waypoint}, default=lambda x: x.serialize())
-
-
 
 
 #

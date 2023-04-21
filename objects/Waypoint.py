@@ -1,5 +1,4 @@
-import json
-import pickle
+from flask.json import JSONDecoder, JSONEncoder
 
 
 class Waypoint:
@@ -32,23 +31,19 @@ class Waypoint:
     def __eq__(self, obj):
         return isinstance(obj, Waypoint) and obj._id == self._id
 
-    # serialization
     def serialize(self):
-        return json.dumps(self, cls=WaypointEncoder)
-
-        # return {"id": self._id, "place_id": self._place_id, "area_id": self._area_id}
-
-        # return pickle.dumps(self)
-
-    @staticmethod
-    def deserialize(serialized_data):
-        return pickle.loads(serialized_data)
+        return {
+            '_id': self.get_id(),
+            '_place_id': self.get_place_id(),
+            '_area_id': self.get_area_id(),
+        }
 
 
-class WaypointEncoder(json.JSONEncoder):
+# TODO: make generic encoder
+class JsonEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Waypoint):
-            return {
-                obj.__str__()
-            }
+            return obj.serialize()
+        if isinstance(obj, set):
+            return list(obj)
         return super().default(obj)
