@@ -1,4 +1,3 @@
-from flask.json import JSONDecoder, JSONEncoder
 
 
 class Waypoint:
@@ -33,17 +32,10 @@ class Waypoint:
 
     def serialize(self):
         return {
-            '_id': self.get_id(),
-            '_place_id': self.get_place_id(),
-            '_area_id': self.get_area_id(),
+            'id': self.get_id(),
+            'place_id': self.get_place_id(),
+            'area_id': self.get_area_id(),
         }
 
 
-# TODO: make generic encoder
-class JsonEncoder(JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Waypoint):
-            return obj.serialize()
-        if isinstance(obj, set):
-            return list(obj)
-        return super().default(obj)
+

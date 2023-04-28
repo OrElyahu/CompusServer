@@ -191,4 +191,13 @@ class Graph:
 
         return f'Graph: {self._graph_name} \n{parts_str}'
 
+    def serialize(self):
+        return {
+            'graph_name': self.get_graph_name(),
+            'places': self.get_places(),
+            'wps': self.get_wps(),
+            'wp_neighs': self.get_wp_neighs(),
+            'paths': self.get_paths(),
+            'poi_wps': self.get_poi_wps()
+            }
 

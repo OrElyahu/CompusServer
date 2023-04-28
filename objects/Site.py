@@ -53,3 +53,10 @@ class Site:
                  'Graphs': '\n'.join([str(graph) for graph in self._graphs])}
         parts_str = '\n'.join([f'{key}:\n{value}' for key, value in parts.items()])
         return f'Site: {self._site_name} \n{parts_str}'
+
+    def serialize(self):
+        return {
+            'site_name': self.get_site_name(),
+            'graphs': self.get_graphs(),
+            'entrances': self.get_entrances()
+            }

@@ -38,3 +38,9 @@ class Place:
         areas_str = '\n'.join([str(area) for area in self._areas])
         return f'Place: {self._place_name} \nAreas:\n{areas_str}'
 
+    def serialize(self):
+        return {
+            'place_name': self.get_place_name(),
+            'areas': self.get_areas()
+        }
+

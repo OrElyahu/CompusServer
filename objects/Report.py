@@ -47,10 +47,12 @@ class Report:
     def set_direction(self, direction):
         self._direction = direction
 
-    # serialization
     def serialize(self):
-        return pickle.dumps(self)
-
-    @staticmethod
-    def deserialize(serialized_data):
-        return pickle.loads(serialized_data)
+        return {
+            'report_id': self.get_report_id(),
+            'reporter_email': self.get_reporter_email(),
+            'text': self.get_text(),
+            'image': self.get_image(),
+            'wp_id': self.get_wp_id(),
+            'direction': self.get_direction()
+        }
