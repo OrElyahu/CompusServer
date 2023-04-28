@@ -6,9 +6,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import DBUtils
 from objects.Path import A11y
-import objects.Site
-import objects.Graph
-from objects.Waypoint import JsonEncoder
+from objects.Utils import JsonEncoder
 
 # TODO : clean comments and TODOs
 
