@@ -22,10 +22,37 @@ db = firestore.client()
 # images_put_args.add_argument("x_pos", type=float, help="X position (0-1)", required=True)
 # images_put_args.add_argument("y_pos", type=float, help="Y position (0-1)", required=True)
 
-class LookAround(Resource):
+# class LookAround(Resource):
+#     sites = {doc.id: DBUtils.des_site(doc) for doc in db.collection(u'sites').stream()}
+#
+#     def get(self):
+#         parser = reqparse.RequestParser()
+#         parser.add_argument('site_name', type=str, required=True)
+#         args = parser.parse_args()
+#         site_name = args['site_name']
+#         if site_name not in self.sites:
+#             abort(404, message=f"Site : {site_name} not found")
+#
+#         return jsonify(self.sites[site_name])
+
+
+class App(Resource):
     sites = {doc.id: DBUtils.des_site(doc) for doc in db.collection(u'sites').stream()}
 
     def get(self):
+        pass
+
+    def post(self):
+        pass
+
+    def put(self):
+        pass
+
+    def delete(self):
+        pass
+
+    @app.route('/get_site', methods=['GET'])
+    def get_site(self):
         parser = reqparse.RequestParser()
         parser.add_argument('site_name', type=str, required=True)
         args = parser.parse_args()
@@ -35,11 +62,8 @@ class LookAround(Resource):
 
         return jsonify(self.sites[site_name])
 
-
-class App(Resource):
-    sites = {doc.id: DBUtils.des_site(doc) for doc in db.collection(u'sites').stream()}
-
-    def get(self):
+    @app.route('/shortest_path', methods=['GET'])
+    def shortest_path(self):
         parser = reqparse.RequestParser()
         parser.add_argument('site_name', type=str, required=True)
         parser.add_argument('poi_start', type=str, required=True)
@@ -125,8 +149,13 @@ class App(Resource):
 
 # api.add_resource(Image, "/image/<int:image_id>")
 
-api.add_resource(App, "/shortest_path")
-api.add_resource(LookAround, "/get_site")
+app_instance = App.as_view('app_instance')
+api.add_resource(app_instance, "/get_site", endpoint="get_site")
+api.add_resource(app_instance, "/shortest_path", endpoint="shortest_path")
+
+# api.add_resource(App)
+
+# api.add_resource(LookAround, "/get_site")
 
 if __name__ == "__main__":
     app.run(debug=True)
