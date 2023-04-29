@@ -34,5 +34,5 @@ class Path:
     def serialize(self):
         return {
             'time': self.get_time(),
-            'a11y': self.get_a11y()
+            'a11y': [a11y.value for a11y in self._a11y]
         }

@@ -13,11 +13,16 @@ BASE = "http://127.0.0.1:5000/"
 
 # response = requests.get(BASE + "shortest_path?site_name=Afeka&poi_start=Class 301&poi_end=Class 302")
 
-poi_start = 'Gate'
-poi_end = 'Class 304'
-response = requests.get(BASE + f"shortest_path?site_name=Afeka&poi_start={poi_start}&poi_end={poi_end}")
+# poi_start = 'Gate'
+# poi_end = 'Class 304'
+# response = requests.get(BASE + f"shortest_path?site_name=Afeka&poi_start={poi_start}&poi_end={poi_end}")
+#
+# print(json.dumps(response.json(), indent=2))
 
+
+response = requests.get(BASE + "get_site?site_name=Afeka")
 print(json.dumps(response.json(), indent=2))
+
 
 # waypoint = Waypoint("1", "place_1", "area_1")
 # json_data = json.dumps({"waypoint": waypoint}, default=lambda x: x.serialize())

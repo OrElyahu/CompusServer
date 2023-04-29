@@ -22,6 +22,19 @@ db = firestore.client()
 # images_put_args.add_argument("x_pos", type=float, help="X position (0-1)", required=True)
 # images_put_args.add_argument("y_pos", type=float, help="Y position (0-1)", required=True)
 
+class LookAround(Resource):
+    sites = {doc.id: DBUtils.des_site(doc) for doc in db.collection(u'sites').stream()}
+
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('site_name', type=str, required=True)
+        args = parser.parse_args()
+        site_name = args['site_name']
+        if site_name not in self.sites:
+            abort(404, message=f"Site : {site_name} not found")
+
+        return jsonify(self.sites[site_name])
+
 
 class App(Resource):
     sites = {doc.id: DBUtils.des_site(doc) for doc in db.collection(u'sites').stream()}
@@ -113,6 +126,7 @@ class App(Resource):
 # api.add_resource(Image, "/image/<int:image_id>")
 
 api.add_resource(App, "/shortest_path")
+api.add_resource(LookAround, "/get_site")
 
 if __name__ == "__main__":
     app.run(debug=True)

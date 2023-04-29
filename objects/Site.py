@@ -57,6 +57,6 @@ class Site:
     def serialize(self):
         return {
             'site_name': self.get_site_name(),
-            'graphs': self.get_graphs(),
-            'entrances': self.get_entrances()
-            }
+            'graphs': [graph.serialize() for graph in self._graphs],
+            'entrances': self._entrances
+        }

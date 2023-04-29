@@ -1,6 +1,9 @@
 import json
 from enum import Enum
+
+import DBUtils
 from flask.json import JSONEncoder
+from google.type.latlng_pb2 import LatLng
 
 
 class Direction(Enum):
@@ -29,8 +32,10 @@ class JsonEncoder(JSONEncoder):
         from objects.Place import Place
         from objects.Report import Report
         from objects.Waypoint import Waypoint
-        if any([isinstance(obj, c) for c in [Waypoint, Path, Site, Graph, Place, Area, Report]]):
+        if any([isinstance(obj, c) for c in [Site, Waypoint, Path, Graph, Place, Area, Report]]):
             return obj.serialize()
         if isinstance(obj, set):
             return list(obj)
+        if isinstance(obj, LatLng):
+            return {'latitude': obj.latitude, 'longitude': obj.longitude}
         return super().default(obj)
