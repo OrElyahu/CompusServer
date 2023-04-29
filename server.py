@@ -1,12 +1,15 @@
 import argparse
+import uuid
 
 import firebase_admin
+
 import DBUtils
+import objects.Utils
 from objects.Path import A11y
 from objects.Utils import JsonEncoder
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_restful import Api, reqparse, abort
-from firebase_admin import credentials, firestore
+from firebase_admin import credentials, firestore, storage
 
 app = Flask(__name__)
 app.json_encoder = JsonEncoder
@@ -14,8 +17,43 @@ api = Api(app)
 cred = credentials.Certificate('admin-key.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
+bucket = storage.bucket('navigate-a1e16.appspot.com')
 
 sites = {doc.id: DBUtils.des_site(doc) for doc in db.collection(u'sites').stream()}
+
+
+@app.route('/upload_report', methods=['POST'])
+def upload_report():
+    parser = reqparse.RequestParser()
+    report_id = str(uuid.uuid4())
+    parser.add_argument('reporter_email', type=str, required=True)
+    parser.add_argument('description', type=str, required=True)
+    parser.add_argument('wp_id', type=str, required=True)
+    parser.add_argument('direction', type=int, required=True)
+    parser.add_argument('site_name', type=str, required=True)
+    image_file = request.files['image']
+    args = parser.parse_args()
+
+    # save image to Storage under reports section
+    content_type = 'image/jpeg'
+    blob = bucket.blob('reports/' + report_id)
+    blob.upload_from_file(image_file, content_type=content_type)
+    url = blob.public_url
+
+    report_ref = db.collection('reports')
+
+    report_data = {
+        'reporter_email': args['reporter_email'],
+        'description': args['description'],
+        'wp_id': args['wp_id'],
+        'direction': args['direction'],
+        'site_name': args['site_name']
+    }
+
+    # add the document to the collection with the report_id as the document ID
+    report_ref.document(report_id).set(report_data)
+
+    return {'success': 'Report added successfully'}, 200
 
 
 @app.route('/get_site', methods=['GET'])

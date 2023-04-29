@@ -3,13 +3,13 @@ import pickle
 
 class Report:
 
-    def __init__(self, report_id, reporter_email, text, image, wp_id, direction):
+    def __init__(self, report_id, reporter_email, description, wp_id, direction, site_name):
         self._report_id = report_id
         self._reporter_email = reporter_email
-        self._text = text
-        self._image = image
+        self._description = description
         self._wp_id = wp_id
         self._direction = direction
+        self._site_name = site_name
 
     def get_report_id(self):
         return self._report_id
@@ -23,17 +23,11 @@ class Report:
     def set_reporter_email(self, reporter_email):
         self._reporter_email = reporter_email
 
-    def get_text(self):
-        return self._text
+    def get_description(self):
+        return self._description
 
-    def set_text(self, text):
-        self._text = text
-
-    def get_image(self):
-        return self._image
-
-    def set_image(self, image):
-        self._image = image
+    def set_description(self, description):
+        self._description = description
 
     def get_wp_id(self):
         return self._wp_id
@@ -47,12 +41,18 @@ class Report:
     def set_direction(self, direction):
         self._direction = direction
 
+    def get_site_name(self):
+        return self._site_name
+
+    def set_site_name(self, site_name):
+        self._site_name = site_name
+
     def serialize(self):
         return {
             'report_id': self.get_report_id(),
             'reporter_email': self.get_reporter_email(),
-            'text': self.get_text(),
-            'image': self.get_image(),
+            'description': self.get_description(),
             'wp_id': self.get_wp_id(),
-            'direction': self.get_direction()
+            'direction': self.get_direction(),
+            'site_name': self.get_site_name()
         }
