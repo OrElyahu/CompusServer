@@ -5,7 +5,6 @@ import uuid
 import firebase_admin
 
 import DBUtils
-import objects.Utils
 from objects.Path import A11y
 from objects.Utils import JsonEncoder
 from flask import Flask, jsonify, request
@@ -34,13 +33,13 @@ def upload_report():
     parser.add_argument('site_name', type=str, required=True)
     image_file = request.files['image']
     extension = os.path.splitext(image_file.filename)[1]
-    if extension not in ['jpg', 'jpeg']:
+    if extension not in ['.jpg', '.jpeg', '.png']:
         abort(400, message=f"File with extension : {extension} is invalid. Must be jpeg/jpg.")
 
     args = parser.parse_args()
 
     # save image to Storage under reports section
-    blob = bucket.blob('reports/' + report_id)
+    blob = bucket.blob(f'reports/{report_id}.{extension}')
     blob.upload_from_file(image_file, content_type='image/jpeg')
     url = blob.public_url
 
@@ -58,6 +57,34 @@ def upload_report():
     report_ref.document(report_id).set(report_data)
 
     return {'success': 'Report added successfully'}, 200
+
+
+def traverse_folder(folder_name, urls):
+    # TODO: prevent repetition
+    blobs = bucket.list_blobs(prefix=folder_name)
+    for blob in blobs:
+        print(blob.name)
+        if blob.name == folder_name:
+            continue
+        if blob.name.endswith('.jpg') or blob.name.endswith('.jpeg') or blob.name.endswith('.png'):
+            urls.append(blob.public_url)
+        elif blob.name.endswith('/'):
+            traverse_folder(blob.name, urls)
+
+
+@app.route('/get_site_images', methods=['GET'])
+def get_site_images():
+    parser = reqparse.RequestParser()
+    parser.add_argument('site_name', type=str, required=True)
+    args = parser.parse_args()
+    site_name = args['site_name']
+    if site_name not in sites:
+        abort(404, message=f"Site : {site_name} not found")
+
+    folder_name = f'sites/{site_name}/graphs/'
+    urls = list()
+    traverse_folder(folder_name, urls)
+    return jsonify(urls)
 
 
 @app.route('/get_site', methods=['GET'])

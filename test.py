@@ -20,7 +20,10 @@ BASE = "http://127.0.0.1:5000/"
 # print(json.dumps(response.json(), indent=2))
 
 
-response = requests.get(BASE + "get_site?site_name=Afeka")
+# response = requests.get(BASE + "get_site?site_name=Afeka")
+# print(json.dumps(response.json(), indent=2))
+
+response = requests.get(BASE + "get_site_images?site_name=Afeka")
 print(json.dumps(response.json(), indent=2))
 
 
