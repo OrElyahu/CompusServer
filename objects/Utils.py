@@ -1,7 +1,6 @@
 import json
 from enum import Enum
 
-import DBUtils
 from flask.json import JSONEncoder
 from google.type.latlng_pb2 import LatLng
 

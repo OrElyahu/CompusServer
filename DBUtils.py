@@ -4,7 +4,7 @@ from google.type.latlng_pb2 import LatLng
 
 from objects.Area import Area
 from objects.Graph import Graph
-from objects.Path import Path
+from objects.Path import Path, A11y
 from objects.Place import Place
 from objects.Site import Site
 from objects.Waypoint import Waypoint
@@ -105,4 +105,5 @@ def des_paths(col_ref: db.CollectionReference):
 
 def des_path(doc_ref):
     dic_doc = doc_ref.to_dict()
+    dic_doc['a11y'] = [A11y(val) for val in dic_doc['a11y']]
     return Path(**dic_doc)
