@@ -1,4 +1,5 @@
 import argparse
+import os
 import uuid
 
 import firebase_admin
@@ -32,12 +33,15 @@ def upload_report():
     parser.add_argument('direction', type=int, required=True)
     parser.add_argument('site_name', type=str, required=True)
     image_file = request.files['image']
+    extension = os.path.splitext(image_file.filename)[1]
+    if extension not in ['jpg', 'jpeg']:
+        abort(400, message=f"File with extension : {extension} is invalid. Must be jpeg/jpg.")
+
     args = parser.parse_args()
 
     # save image to Storage under reports section
-    content_type = 'image/jpeg'
     blob = bucket.blob('reports/' + report_id)
-    blob.upload_from_file(image_file, content_type=content_type)
+    blob.upload_from_file(image_file, content_type='image/jpeg')
     url = blob.public_url
 
     report_ref = db.collection('reports')
