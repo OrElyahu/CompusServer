@@ -59,19 +59,6 @@ def upload_report():
     return {'success': 'Report added successfully'}, 200
 
 
-def traverse_folder(folder_name, urls):
-    # TODO: prevent repetition
-    blobs = bucket.list_blobs(prefix=folder_name)
-    for blob in blobs:
-        print(blob.name)
-        if blob.name == folder_name:
-            continue
-        if blob.name.endswith('.jpg') or blob.name.endswith('.jpeg') or blob.name.endswith('.png'):
-            urls.append(blob.public_url)
-        elif blob.name.endswith('/'):
-            traverse_folder(blob.name, urls)
-
-
 @app.route('/get_site_images', methods=['GET'])
 def get_site_images():
     parser = reqparse.RequestParser()
@@ -82,9 +69,8 @@ def get_site_images():
         abort(404, message=f"Site : {site_name} not found")
 
     folder_name = f'sites/{site_name}/graphs/'
-    urls = list()
-    traverse_folder(folder_name, urls)
-    return jsonify(urls)
+    return jsonify([blob.public_url for blob in bucket.list_blobs(prefix=folder_name)
+                    if blob.name.endswith(('jpg', 'jpeg', 'png'))])
 
 
 @app.route('/get_site', methods=['GET'])
