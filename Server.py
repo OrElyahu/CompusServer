@@ -69,8 +69,9 @@ def get_site_images():
         abort(404, message=f"Site : {site_name} not found")
 
     folder_name = f'sites/{site_name}/graphs/'
-    return jsonify([blob.public_url for blob in bucket.list_blobs(prefix=folder_name)
-                    if blob.name.endswith(('jpg', 'jpeg', 'png'))])
+    return jsonify({os.path.splitext(os.path.basename(blob.name))[0]: blob.public_url
+                    for blob in bucket.list_blobs(prefix=folder_name)
+                    if blob.name.endswith(('jpg', 'jpeg', 'png'))})
 
 
 @app.route('/get_site', methods=['GET'])
