@@ -178,6 +178,12 @@ class Graph:
         ''"""
         return None
 
+    def __dict__(self):
+        return {
+            'wp_neighs': self.get_wp_neighs(),
+            'poi_wps': self.get_poi_wps()
+        }
+
     def __eq__(self, obj):
         return isinstance(obj, Graph) and self._graph_name == obj._graph_name
 
@@ -200,4 +206,12 @@ class Graph:
             'paths': self.get_paths(),
             'poi_wps': self.get_poi_wps()
             }
+
+    def deserialize(self, data):
+        self._graph_name = data['graph_name']
+        self._places = data['places']
+        self._wps = data['wps']
+        self._wp_neighs = data['wp_neighs']
+        self._paths = data['paths']
+        self._poi_wps = data['poi_wps']
 

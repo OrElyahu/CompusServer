@@ -37,5 +37,9 @@ class Waypoint:
             'area_id': self.get_area_id(),
         }
 
+    def deserialize(self, data):
+        self._id = data['id']
+        self._place_id = data['place_id']
+        self._area_id = data['area_id']
 
 

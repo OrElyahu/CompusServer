@@ -44,3 +44,6 @@ class Place:
             'areas': self.get_areas()
         }
 
+    def deserialize(self, data):
+        self._place_name = data['place_name']
+        self._areas = data['areas']

@@ -3,10 +3,12 @@ import json
 import firebase_admin
 from firebase_admin import credentials, firestore
 import requests
+
+import objects.Utils
 from objects import Waypoint
 import DBUtils
 
-BASE = "http://127.0.0.1:5000/"
+# BASE = "http://127.0.0.1:5000/"
 # response = requests.get(BASE + "shortest_path?site_name=Afeka&poi_start=Class 301&poi_end=Class 302&a11y=WALK")
 
 # print(json.dumps(response.json(), indent=2))
@@ -23,8 +25,8 @@ BASE = "http://127.0.0.1:5000/"
 # response = requests.get(BASE + "get_site?site_name=Afeka")
 # print(json.dumps(response.json(), indent=2))
 
-response = requests.get(BASE + "get_site_images?site_name=Afeka")
-print(json.dumps(response.json(), indent=2))
+# response = requests.get(BASE + "get_site_images?site_name=Afeka")
+# print(json.dumps(response.json(), indent=2))
 
 
 # waypoint = Waypoint("1", "place_1", "area_1")
@@ -82,6 +84,42 @@ print(json.dumps(response.json(), indent=2))
 # short_path = graph.shortest_path('outside-left', '301')
 # for wp in short_path:
 #     print(wp)
+from objects.Graph import Graph
+from objects.Site import Site
+from google.type.latlng_pb2 import LatLng
+
+cred = credentials.Certificate('admin-key.json')
+firebase_admin.initialize_app(cred)
+db = firestore.client()
+# sites = {doc.id: DBUtils.des_site(doc) for doc in db.collection(u'sites').stream()}
+# site = sites['Afeka']
+
+sites_collection = db.collection(u'sites_test')
+site_doc_ref = sites_collection.document('Afeka')
+site_doc = site_doc_ref.get()
+site_data = site_doc.to_dict()
+site = Site('', [], {})
+site.deserialize(site_data)
+graphs = site.get_graphs()
+# graph = graphs[0]
+# places = graph.get_places()
+print(site.get_entrances())
+
+# doc_ref = db.collection('sites_test').document(str(site.get_site_name()))
+# site_json = json.dumps(site.serialize(), cls=objects.Utils.JsonEncoder)
+# doc_ref.set(json.loads(site_json))
+
+# DBUtils.export_site(site, db)
+
+# site_json = json.dumps(site.__dict__(), cls=objects.Utils.JsonEncoder)
+# # print(site_json)
+# doc_ref_site = db.collection('sites_test').document(str(site.get_site_name()))
+# doc_ref_site.set(json.loads(site_json))
+# graphs = site.get_graphs()
+# for graph in graphs:
+#     doc_ref_graph = doc_ref_site.collection('graphs').document(graph.get_graph_name())
+#     graph_json = json.dumps(graph.__dict__(), cls=objects.Utils.JsonEncoder)
+#     doc_ref_graph.set(json.loads(graph_json))
 
 # TODO: implements
 '''

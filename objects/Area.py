@@ -40,3 +40,8 @@ class Area:
             'area_map': self.get_area_map(),
             'wp_ids': self.get_wp_ids()
             }
+
+    def deserialize(self, data):
+        self._area_id = data['area_id']
+        self._area_map = data['area_map']
+        self._wp_ids = data['wp_ids']

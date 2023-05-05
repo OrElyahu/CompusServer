@@ -1,3 +1,6 @@
+import json
+from typing import List
+
 from firebase_admin import firestore
 from google.cloud import firestore as db
 from google.type.latlng_pb2 import LatLng
@@ -8,6 +11,35 @@ from objects.Path import Path, A11y
 from objects.Place import Place
 from objects.Site import Site
 from objects.Waypoint import Waypoint
+from objects.Utils import JsonEncoder
+
+
+def export_site(site: Site, db: firestore):
+    doc_ref = db.collection('sites_test').document(str(site.get_site_name()))
+    site_json = json.dumps(site.__dict__(), cls=JsonEncoder)
+    doc_ref.set(json.loads(site_json))
+    graphs = site.get_graphs()
+    graphs_collection = doc_ref.collection('graphs')
+    export_graphs(graphs, graphs_collection)
+
+
+def export_graphs(graphs: List[Graph], graphs_collection: firestore):
+    for graph in graphs:
+        export_graph(graph, graphs_collection)
+
+def export_graph(graph: Graph, graphs_collection: firestore):
+    doc_ref_graph = graphs_collection.document(graph.get_graph_name())
+    graph_json = json.dumps(graph.__dict__(), cls=JsonEncoder)
+    doc_ref_graph.set(json.loads(graph_json))
+    paths_collection = graphs_collection.collection('paths')
+    paths = graph.get_paths()
+    places_collection = graphs_collection.collection('paths')
+    wps_collection = graphs_collection.collection('paths')
+
+# def export_paths(paths, paths_collection: firestore):
+#
+# def export_path(path, paths_collection: firestore):
+
 
 
 def des_site(site_doc: db.DocumentSnapshot):

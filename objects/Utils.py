@@ -1,7 +1,8 @@
 import json
 from enum import Enum
 
-from flask.json import JSONEncoder
+from flask.json import JSONEncoder, JSONDecoder
+from google.cloud.firestore_v1 import GeoPoint
 from google.type.latlng_pb2 import LatLng
 
 
@@ -38,3 +39,21 @@ class JsonEncoder(JSONEncoder):
         if isinstance(obj, LatLng):
             return {'latitude': obj.latitude, 'longitude': obj.longitude}
         return super().default(obj)
+
+
+class JsonDecoder(JSONDecoder):
+    def default(self, obj):
+        from objects.Site import Site
+        from objects.Area import Area
+        from objects.Path import Path
+        from objects.Graph import Graph
+        from objects.Place import Place
+        from objects.Report import Report
+        from objects.Waypoint import Waypoint
+        if any([isinstance(obj, c) for c in [Site, Waypoint, Path, Graph, Place, Area, Report]]):
+            return obj.deserialize()
+        # if isinstance(obj, set):
+        #     return list(obj)
+        if isinstance(obj, LatLng):
+            return LatLng(latitude=obj.latitude, longitude='longitude')
+        return None

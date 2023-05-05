@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 from google.type.latlng_pb2 import LatLng
 
@@ -6,7 +6,7 @@ from objects.Graph import Graph
 
 
 class Site:
-    def __init__(self, site_name, graphs: List[Graph], entrances: dict):
+    def __init__(self, site_name, graphs: List[Graph], entrances: Dict[str, LatLng]):
         self._site_name = site_name
         self._graphs = graphs or []
         self._entrances = entrances or {}
@@ -23,7 +23,7 @@ class Site:
     def set_graphs(self, graphs: List[Graph]):
         self._graphs = graphs
 
-    def get_entrances(self):
+    def get_entrances(self) -> Dict[str, LatLng]:
         return self._entrances
 
     def set_entrances(self, entrances: dict):
@@ -45,6 +45,11 @@ class Site:
     def remove_graph(self, graph_name):
         self._graphs = [graph for graph in self._graphs if graph.get_graph_name() != graph_name]
 
+    def __dict__(self):
+        return {
+            'entrances': self._entrances
+        }
+
     def __eq__(self, obj):
         return isinstance(obj, Site) and self._site_name == obj._site_name
 
@@ -60,3 +65,8 @@ class Site:
             'graphs': [graph.serialize() for graph in self._graphs],
             'entrances': self._entrances
         }
+
+    def deserialize(self, data):
+        self._site_name = data['site_name']
+        self._graphs = [Graph('', [], {}, {}, {}, {}).deserialize(graph_data) for graph_data in data['graphs']]
+        self._entrances = data['entrances']
