@@ -23,7 +23,7 @@ bucket = storage.bucket('navigate-a1e16.appspot.com')
 
 # sites = {doc.id: DBUtils.des_site(doc) for doc in db.collection(u'sites').stream()}
 sites = {}
-for doc in db.collection('sites_test').stream():
+for doc in db.collection('sites').stream():
     site_json = doc.to_dict()
     val = Site('', [], {})
     val.deserialize(site_json)

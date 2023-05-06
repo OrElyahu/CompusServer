@@ -86,16 +86,17 @@ class Test:
 
 res = Test()
 # get_site_from_col_doc
-# site = res.get_site_from_col_doc('sites_test', 'Afeka')
+# site = res.get_site_from_col_doc('sites', 'Afeka')
 # print(site)
+
 
 # get_site
 # site = res.get_site('Afekas')
 # print(site)
 
 # get_site_images
-urls = res.get_site_images('Afeka')
-print(urls)
+# urls = res.get_site_images('Afeka')
+# print(urls)
 
 # upload_report
 # report = Report('', 'test_reporter@gmail.com', 'This is a test', '301', 2, 'Afeka')
