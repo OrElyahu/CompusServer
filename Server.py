@@ -5,7 +5,6 @@ import uuid
 import firebase_admin
 
 import socket
-import DBUtils
 from objects.Path import A11y
 from objects.Site import Site
 from objects.Utils import JsonEncoder
