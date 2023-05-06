@@ -27,6 +27,7 @@ def export_graphs(graphs: List[Graph], graphs_collection: firestore):
     for graph in graphs:
         export_graph(graph, graphs_collection)
 
+
 def export_graph(graph: Graph, graphs_collection: firestore):
     doc_ref_graph = graphs_collection.document(graph.get_graph_name())
     graph_json = json.dumps(graph.__dict__(), cls=JsonEncoder)
@@ -36,10 +37,10 @@ def export_graph(graph: Graph, graphs_collection: firestore):
     places_collection = graphs_collection.collection('paths')
     wps_collection = graphs_collection.collection('paths')
 
+
 # def export_paths(paths, paths_collection: firestore):
 #
 # def export_path(path, paths_collection: firestore):
-
 
 
 def des_site(site_doc: db.DocumentSnapshot):

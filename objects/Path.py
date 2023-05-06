@@ -39,5 +39,4 @@ class Path:
 
     def deserialize(self, data):
         self._time = data['time']
-        # TODO: change?
-        self._a11y = data['a11y']
+        self._a11y = [A11y(v) for v in data['a11y']]

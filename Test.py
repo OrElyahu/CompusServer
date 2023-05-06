@@ -88,26 +88,38 @@ from objects.Graph import Graph
 from objects.Site import Site
 from google.type.latlng_pb2 import LatLng
 
-cred = credentials.Certificate('admin-key.json')
-firebase_admin.initialize_app(cred)
-db = firestore.client()
-# sites = {doc.id: DBUtils.des_site(doc) for doc in db.collection(u'sites').stream()}
-# site = sites['Afeka']
 
-sites_collection = db.collection(u'sites_test')
-site_doc_ref = sites_collection.document('Afeka')
-site_doc = site_doc_ref.get()
-site_data = site_doc.to_dict()
-site = Site('', [], {})
-site.deserialize(site_data)
-graphs = site.get_graphs()
-# graph = graphs[0]
-# places = graph.get_places()
-print(site.get_entrances())
+class Test:
 
-# doc_ref = db.collection('sites_test').document(str(site.get_site_name()))
-# site_json = json.dumps(site.serialize(), cls=objects.Utils.JsonEncoder)
-# doc_ref.set(json.loads(site_json))
+    def __init__(self):
+        self._cred = credentials.Certificate('admin-key.json')
+        firebase_admin.initialize_app(self._cred)
+        self._db = firestore.client()
+
+    def get_site_from_col_doc(self, col, doc) -> Site:
+        sites_collection = self._db.collection(col)
+        site_doc_ref = sites_collection.document(doc)
+        site_doc = site_doc_ref.get()
+        site_data = site_doc.to_dict()
+        ret_val = Site('', [], {})
+        ret_val.deserialize(site_data)
+        return ret_val
+
+    def save_site_to_col(self, site_obj: Site, col):
+        sites_collection = self._db.collection(col)
+        saved_doc_ref = sites_collection.document(str(site_obj.get_site_name()))
+        site_json = json.dumps(site_obj.serialize(), cls=objects.Utils.JsonEncoder)
+        # print(site_json)
+        saved_doc_ref.set(json.loads(site_json))
+
+
+res = Test()
+site = res.get_site_from_col_doc('sites_test', 'Afeka')
+res.save_site_to_col(site, 'sites_ser_test')
+
+
+
+# res.save_site_from_col_doc(site, 'sites_ser_test')
 
 # DBUtils.export_site(site, db)
 

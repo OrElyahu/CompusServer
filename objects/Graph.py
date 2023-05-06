@@ -209,9 +209,26 @@ class Graph:
 
     def deserialize(self, data):
         self._graph_name = data['graph_name']
-        self._places = data['places']
-        self._wps = data['wps']
+        self._places = []
+        for place in data['places']:
+            val = Place('')
+            val.deserialize(place)
+            self._places.append(val)
+        self._wps = {}
+        for k, v in data['wps'].items():
+            val = Waypoint()
+            val.deserialize(v)
+            self._wps[k] = val
         self._wp_neighs = data['wp_neighs']
-        self._paths = data['paths']
+        self._paths = {}
+        for k, v in data['paths'].items():
+            val = Path(0)
+            val.deserialize(v)
+            self._paths[k] = val
         self._poi_wps = data['poi_wps']
 
+
+        # self._places = data['places']
+        # self._wps = data['wps']
+        # self._paths = data['paths']
+        # self._poi_wps = data['poi_wps']

@@ -1,5 +1,6 @@
 from typing import List, Dict
 
+from google.cloud.firestore_v1 import GeoPoint
 from google.type.latlng_pb2 import LatLng
 
 from objects.Graph import Graph
@@ -26,7 +27,7 @@ class Site:
     def get_entrances(self) -> Dict[str, LatLng]:
         return self._entrances
 
-    def set_entrances(self, entrances: dict):
+    def set_entrances(self, entrances: Dict[str, LatLng]):
         self._entrances = entrances
 
     def add_entrance(self, wp_id, latlng: LatLng):
@@ -68,5 +69,11 @@ class Site:
 
     def deserialize(self, data):
         self._site_name = data['site_name']
-        self._graphs = [Graph('', [], {}, {}, {}, {}).deserialize(graph_data) for graph_data in data['graphs']]
-        self._entrances = data['entrances']
+        self._graphs = []
+        for graph_data in data['graphs']:
+            val = Graph('', [], {}, {}, {}, {})
+            val.deserialize(graph_data)
+            self._graphs.append(val)
+        # self._graphs = [Graph('', [], {}, {}, {}, {}).deserialize(graph_data) for graph_data in data['graphs']]
+        # self._graphs = []
+        self._entrances = {k: LatLng(**v) for k, v in data['entrances'].items()}

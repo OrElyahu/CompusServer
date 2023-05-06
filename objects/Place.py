@@ -46,4 +46,8 @@ class Place:
 
     def deserialize(self, data):
         self._place_name = data['place_name']
-        self._areas = data['areas']
+        self._areas = []
+        for area in data['areas']:
+            val = Area('', '')
+            val.deserialize(area)
+            self._areas.append(val)
