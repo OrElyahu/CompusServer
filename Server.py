@@ -7,6 +7,7 @@ import firebase_admin
 import socket
 import DBUtils
 from objects.Path import A11y
+from objects.Site import Site
 from objects.Utils import JsonEncoder
 from flask import Flask, jsonify, request, abort
 from flask_restful import Api, reqparse
@@ -20,7 +21,13 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 bucket = storage.bucket('navigate-a1e16.appspot.com')
 
-sites = {doc.id: DBUtils.des_site(doc) for doc in db.collection(u'sites').stream()}
+# sites = {doc.id: DBUtils.des_site(doc) for doc in db.collection(u'sites').stream()}
+sites = {}
+for doc in db.collection('sites_test').stream():
+    site_json = doc.to_dict()
+    val = Site('', [], {})
+    val.deserialize(site_json)
+    sites[doc.id] = val
 
 
 @app.route('/upload_report', methods=['POST'])
@@ -133,4 +140,4 @@ def shortest_path():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host=socket.gethostbyname(socket.gethostname()), port=5000)
+    app.run(debug=True,  port=5000)
