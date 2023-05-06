@@ -56,3 +56,11 @@ class Report:
             'direction': self.get_direction(),
             'site_name': self.get_site_name()
         }
+
+    def deserialize(self, data):
+        self._report_id = data['report_id']
+        self._reporter_email = data['reporter_email']
+        self._description = data['description']
+        self._wp_id = data['wp_id']
+        self._direction = data['direction']
+        self._site_name = data['site_name']

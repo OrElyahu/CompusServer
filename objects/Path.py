@@ -36,3 +36,7 @@ class Path:
             'time': self.get_time(),
             'a11y': [a11y.value for a11y in self._a11y]
         }
+
+    def deserialize(self, data):
+        self._time = data['time']
+        self._a11y = [A11y(v) for v in data['a11y']]

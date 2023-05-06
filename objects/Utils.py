@@ -1,7 +1,8 @@
 import json
 from enum import Enum
 
-from flask.json import JSONEncoder
+from flask.json import JSONEncoder, JSONDecoder
+from google.cloud.firestore_v1 import GeoPoint
 from google.type.latlng_pb2 import LatLng
 
 
