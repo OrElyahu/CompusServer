@@ -20,7 +20,6 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 bucket = storage.bucket('navigate-a1e16.appspot.com')
 
-# sites = {doc.id: DBUtils.des_site(doc) for doc in db.collection(u'sites').stream()}
 sites = {}
 for doc in db.collection('sites').stream():
     site_json = doc.to_dict()
@@ -139,4 +138,8 @@ def shortest_path():
 
 
 if __name__ == "__main__":
-    app.run(debug=True,  port=5000)
+    hostname = socket.gethostname()
+    if hostname == "DESKTOP-A651GUV":
+        app.run(debug=True, host=socket.gethostbyname(hostname), port=5000)
+    else:
+        app.run(debug=True, port=5000)
