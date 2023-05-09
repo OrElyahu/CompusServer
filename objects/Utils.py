@@ -1,20 +1,15 @@
 import json
-from enum import Enum
 
-from flask.json import JSONEncoder, JSONDecoder
-from google.cloud.firestore_v1 import GeoPoint
+from flask.json import JSONEncoder
 from google.type.latlng_pb2 import LatLng
 
-
-class Direction(Enum):
-    UP = 0
-    RIGHT = 1
-    DOWN = 2
-    LEFT = 3
-
-
-def opposite_dir(direction: Direction):
-    return Direction((direction.value + 2) % len(Direction))
+from objects.Site import Site
+from objects.Area import Area
+from objects.Path import Path
+from objects.Graph import Graph
+from objects.Place import Place
+from objects.Report import Report
+from objects.Waypoint import Waypoint
 
 
 def get_config(file_path):
@@ -25,13 +20,6 @@ def get_config(file_path):
 
 class JsonEncoder(JSONEncoder):
     def default(self, obj):
-        from objects.Site import Site
-        from objects.Area import Area
-        from objects.Path import Path
-        from objects.Graph import Graph
-        from objects.Place import Place
-        from objects.Report import Report
-        from objects.Waypoint import Waypoint
         if any([isinstance(obj, c) for c in [Site, Waypoint, Path, Graph, Place, Area, Report]]):
             return obj.serialize()
         if isinstance(obj, set):

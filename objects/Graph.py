@@ -1,10 +1,20 @@
 import heapq
 from typing import List
-
+from enum import Enum
 from objects.Path import Path, A11y
 from objects.Place import Place
-from objects.Utils import Direction, opposite_dir
 from objects.Waypoint import Waypoint
+
+
+class Direction(Enum):
+    UP = 0
+    RIGHT = 1
+    DOWN = 2
+    LEFT = 3
+
+
+def opposite_dir(direction: Direction):
+    return Direction((direction.value + 2) % len(Direction))
 
 
 class Graph:
@@ -191,8 +201,10 @@ class Graph:
         parts = {'Places': '\n'.join([str(place) for place in self._places]),
                  'Waypoints dict': '\n'.join([f'wp_id: {wp_id}, {str(wp)}' for wp_id, wp in self._wps.items()]),
                  'Paths dict': '\n'.join([f'path_id: {p_id}, {str(path)}' for p_id, path in self._paths.items()]),
-                 'Waypoint Neighbors': '\n'.join([f'Neighbors: {wp_id}: {neighs}' for wp_id, neighs in self._wp_neighs.items()]),
-                 'POI to Waypoints': '\n'.join([f'POI: {poi_id}: {wp_ids}' for poi_id, wp_ids in self._poi_wps.items()])}
+                 'Waypoint Neighbors': '\n'.join(
+                     [f'Neighbors: {wp_id}: {neighs}' for wp_id, neighs in self._wp_neighs.items()]),
+                 'POI to Waypoints': '\n'.join(
+                     [f'POI: {poi_id}: {wp_ids}' for poi_id, wp_ids in self._poi_wps.items()])}
         parts_str = '\n'.join([f'{key}:\n{value}' for key, value in parts.items()])
 
         return f'Graph: {self._graph_name} \n{parts_str}'
@@ -205,7 +217,7 @@ class Graph:
             'wp_neighs': self.get_wp_neighs(),
             'paths': self.get_paths(),
             'poi_wps': self.get_poi_wps()
-            }
+        }
 
     def deserialize(self, data):
         self._graph_name = data['graph_name']
@@ -226,9 +238,3 @@ class Graph:
             val.deserialize(v)
             self._paths[k] = val
         self._poi_wps = data['poi_wps']
-
-
-        # self._places = data['places']
-        # self._wps = data['wps']
-        # self._paths = data['paths']
-        # self._poi_wps = data['poi_wps']
