@@ -35,11 +35,9 @@ class Area:
         return f'Area: area_id={self._area_id}, area_map={self._area_map}, wp_ids:{self._wp_ids}'
 
     def serialize(self):
-        return {
-            'area_id': self.get_area_id(),
-            'area_map': self.get_area_map(),
-            'wp_ids': self.get_wp_ids()
-            }
+        return {'area_id': self.get_area_id(),
+                'area_map': self.get_area_map(),
+                'wp_ids': self.get_wp_ids()}
 
     def deserialize(self, data):
         self._area_id = data['area_id']

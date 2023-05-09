@@ -1,5 +1,4 @@
 from typing import List
-
 from objects.Area import Area
 
 
@@ -39,10 +38,8 @@ class Place:
         return f'Place: {self._place_name} \nAreas:\n{areas_str}'
 
     def serialize(self):
-        return {
-            'place_name': self.get_place_name(),
-            'areas': self.get_areas()
-        }
+        return {'place_name': self.get_place_name(),
+                'areas': self.get_areas()}
 
     def deserialize(self, data):
         self._place_name = data['place_name']

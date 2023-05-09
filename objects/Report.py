@@ -1,6 +1,3 @@
-import pickle
-
-
 class Report:
 
     def __init__(self, report_id, reporter_email, description, wp_id, direction, site_name):
@@ -48,14 +45,12 @@ class Report:
         self._site_name = site_name
 
     def serialize(self):
-        return {
-            'report_id': self.get_report_id(),
-            'reporter_email': self.get_reporter_email(),
-            'description': self.get_description(),
-            'wp_id': self.get_wp_id(),
-            'direction': self.get_direction(),
-            'site_name': self.get_site_name()
-        }
+        return {'report_id': self.get_report_id(),
+                'reporter_email': self.get_reporter_email(),
+                'description': self.get_description(),
+                'wp_id': self.get_wp_id(),
+                'direction': self.get_direction(),
+                'site_name': self.get_site_name()}
 
     def deserialize(self, data):
         self._report_id = data['report_id']

@@ -50,14 +50,11 @@ def upload_report():
     url = blob.public_url
 
     report_ref = db.collection('reports')
-
-    report_data = {
-        'reporter_email': args['reporter_email'],
-        'description': args['description'],
-        'wp_id': args['wp_id'],
-        'direction': args['direction'],
-        'site_name': args['site_name']
-    }
+    report_data = {'reporter_email': args['reporter_email'],
+                   'description': args['description'],
+                   'wp_id': args['wp_id'],
+                   'direction': args['direction'],
+                   'site_name': args['site_name']}
 
     # add the document to the collection with the report_id as the document ID
     report_ref.document(report_id).set(report_data)

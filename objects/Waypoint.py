@@ -1,5 +1,3 @@
-
-
 class Waypoint:
     def __init__(self, _id: str = None, place_id=None, area_id=None):
         self._id = _id

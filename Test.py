@@ -1,12 +1,7 @@
 import json
-from http.client import HTTPException
-
-import firebase_admin
 import requests
-from firebase_admin import credentials, firestore
-
-import Server
 import objects.Utils
+from firebase_admin import firestore
 from objects.Report import Report
 from objects.Site import Site
 
@@ -110,12 +105,12 @@ res = Test()
 #     print(path)
 
 
-# TODO: implements
+# TODO: implement the following tests:
 '''
 ***********************
 Rules To Validate:
 ***********************
     -) All POIS are unique, even with multiple graphs
-    -) To be continue....:)
+    -) To be continued....:)
 
 '''

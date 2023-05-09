@@ -189,10 +189,8 @@ class Graph:
         return None
 
     def __dict__(self):
-        return {
-            'wp_neighs': self.get_wp_neighs(),
-            'poi_wps': self.get_poi_wps()
-        }
+        return {'wp_neighs': self.get_wp_neighs(),
+                'poi_wps': self.get_poi_wps()}
 
     def __eq__(self, obj):
         return isinstance(obj, Graph) and self._graph_name == obj._graph_name
@@ -210,14 +208,12 @@ class Graph:
         return f'Graph: {self._graph_name} \n{parts_str}'
 
     def serialize(self):
-        return {
-            'graph_name': self.get_graph_name(),
-            'places': self.get_places(),
-            'wps': self.get_wps(),
-            'wp_neighs': self.get_wp_neighs(),
-            'paths': self.get_paths(),
-            'poi_wps': self.get_poi_wps()
-        }
+        return {'graph_name': self.get_graph_name(),
+                'places': self.get_places(),
+                'wps': self.get_wps(),
+                'wp_neighs': self.get_wp_neighs(),
+                'paths': self.get_paths(),
+                'poi_wps': self.get_poi_wps()}
 
     def deserialize(self, data):
         self._graph_name = data['graph_name']
