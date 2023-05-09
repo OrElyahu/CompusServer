@@ -111,6 +111,9 @@ res = Test()
 Rules To Validate:
 ***********************
     -) All POIS are unique, even with multiple graphs
+    -) All reports have images in Storage with the same name as the report id
+    -) All waypoints, according to neighbors, have the required paths
+    -) All waypoints show up in both their graph's wps, and in area's wps, and the WP obj details the right area+place
     -) To be continued....:)
 
 '''
