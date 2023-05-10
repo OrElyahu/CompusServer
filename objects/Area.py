@@ -19,7 +19,7 @@ class Area:
     def get_wp_ids(self):
         return self._wp_ids
 
-    def set_wp_ids(self, wp_ids):
+    def set_wp_ids(self, wp_ids: set):
         self._wp_ids = wp_ids
 
     def add_wp_id(self, wp_id):
@@ -42,4 +42,4 @@ class Area:
     def deserialize(self, data):
         self._area_id = data['area_id']
         self._area_map = data['area_map']
-        self._wp_ids = data['wp_ids']
+        self._wp_ids = set(data['wp_ids'])

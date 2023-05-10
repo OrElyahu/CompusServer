@@ -28,6 +28,11 @@ for doc in db.collection('sites').stream():
     sites[doc.id] = val
 
 
+@app.route('/add_wp_between', methods=['POST'])
+def add_wp_between():
+    return {'success': 'Report added successfully'}, 200
+
+
 @app.route('/upload_report', methods=['POST'])
 def upload_report():
     parser = reqparse.RequestParser()

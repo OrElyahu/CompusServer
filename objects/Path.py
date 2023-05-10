@@ -15,7 +15,7 @@ class Path:
     def get_time(self) -> int:
         return self._time
 
-    def set_time(self, time:int):
+    def set_time(self, time: int):
         self._time = time
 
     def get_a11y(self):

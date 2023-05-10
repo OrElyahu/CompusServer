@@ -1,9 +1,16 @@
 import json
+from typing import List
+
+import firebase_admin
 import requests
 import objects.Utils
-from firebase_admin import firestore
+from firebase_admin import firestore, credentials
+
+from objects.Graph import Graph
+from objects.Path import A11y
 from objects.Report import Report
 from objects.Site import Site
+from objects.Waypoint import Waypoint
 
 IP = 'localhost'
 PORT = '5000'
@@ -14,8 +21,8 @@ class Test:
 
     def __init__(self):
         # In case server is running -> commit the cred initiation
-        # self._cred = credentials.Certificate('admin-key.json')
-        # firebase_admin.initialize_app(self._cred)
+        self._cred = credentials.Certificate('admin-key.json')
+        firebase_admin.initialize_app(self._cred)
         self._db = firestore.client()
 
     def get_site_from_col_doc(self, col, doc) -> Site:
@@ -78,11 +85,20 @@ class Test:
 
         return response.json()
 
+    def add_wp_between(self, graph: Graph, new_wp: Waypoint, wp_1_id: str, wp_2_id: str, path='/imagesToUpload',
+                       t_from_1: int = 0, t_from_2: int = 0, a11y_from_1: List[A11y] = None,
+                       a11y_from_2: List[A11y] = None):
+        graph.add_wp_between(new_wp, wp_1_id, wp_2_id, path, t_from_1, t_from_2, a11y_from_1, a11y_from_2)
+
 
 res = Test()
 # get_site_from_col_doc
 # site = res.get_site_from_col_doc('sites', 'Afeka')
 # print(site)
+
+
+# save_site_to_col
+# res.save_site_to_col(site, 'sites_test')
 
 
 # get_site
@@ -114,6 +130,20 @@ Rules To Validate:
     -) All reports have images in Storage with the same name as the report id
     -) All waypoints, according to neighbors, have the required paths
     -) All waypoints show up in both their graph's wps, and in area's wps, and the WP obj details the right area+place
+    -) Path names are in format : 'wpId1_wpId2'
     -) To be continued....:)
 
 '''
+
+site = res.get_site('Afeka')
+# print(site)
+wp_new = Waypoint('curb-ramps', 'Ficus', 'Outside')
+wp_1_id = 'location-entrance'
+wp_2_id = 'outside-left'
+graph = site.get_graphs()[0]
+res.add_wp_between(graph, wp_new, wp_1_id, wp_2_id)
+res.save_site_to_col(site, 'sites_test')
+
+# paths = res.shortest_path('Afeka', poi_start, poi_end)
+# for path in paths:
+#     print(path)

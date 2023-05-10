@@ -1,4 +1,5 @@
 import heapq
+import math
 from typing import List
 from enum import Enum
 from objects.Path import Path, A11y
@@ -83,7 +84,9 @@ class Graph:
     def add_wp(self, wp: Waypoint):
         _id = wp.get_id()
         if _id not in self._wps:
-            self._places[wp.get_place_id()].get_areas()[wp.get_area_id()].add_wp_id(_id)
+            place = next((place for place in self._places if place.get_place_name() == wp.get_place_id()), None)
+            area = next((area for area in place.get_areas() if area.get_area_id() == wp.get_area_id()), None)
+            area.add_wp_id(_id)
             self._wps[_id] = wp
             self._wp_neighs[_id] = [None, None, None, None]
 
@@ -116,6 +119,33 @@ class Graph:
     def del_connection(self, wp_src_id, wp_dst_id):
         self.del_oneway_connection(wp_src_id, wp_dst_id)
         self.del_oneway_connection(wp_dst_id, wp_src_id)
+
+    # TODO: add in the future folder_path to image files, validate exists with the right names (wp-dir)
+    def add_wp_between(self, new_wp: Waypoint, wp_1_id: str, wp_2_id: str, path='/imagesToUpload',
+                       t_from_1: int = 0, t_from_2: int = 0, a11y_from_1: List[A11y] = None,
+                       a11y_from_2: List[A11y] = None):
+        _id = new_wp.get_id()
+        if (_id in self._wps) or not (wp_1_id in self._wps and wp_2_id in self._wps):
+            return
+
+        dir_from_1 = Direction(self._wp_neighs[wp_1_id].index(wp_2_id))
+        dir_from_2 = Direction(self._wp_neighs[wp_2_id].index(wp_1_id))
+        if opposite_dir(dir_from_1) != dir_from_2:
+            return 'Wrong directions on DB'
+
+        path_from_1 = self._paths[f'{wp_1_id}_{wp_2_id}']
+        path_from_2 = self._paths[f'{wp_2_id}_{wp_1_id}']
+
+        self.add_wp(new_wp)
+        self.del_connection(wp_1_id, wp_2_id)  # deletes both ways
+        t1 = math.ceil(path_from_1.get_time() / 2)
+        t2 = math.ceil(path_from_2.get_time() / 2)
+        path_from_1.set_time(t_from_1 or t1)
+        path_from_2.set_time(t_from_2 or t2)
+        path_from_1.set_a11y(a11y_from_1 or path_from_1.get_a11y())
+        path_from_2.set_a11y(a11y_from_2 or path_from_2.get_a11y())
+        self.add_connection(_id, wp_1_id, dir_from_1, path_from_1)
+        self.add_connection(_id, wp_2_id, dir_from_2, path_from_2)
 
     """'
     @Input: 2 WPs ids : start_id, end_id
