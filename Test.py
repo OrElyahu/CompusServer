@@ -42,15 +42,12 @@ class Test:
         return ret_val
 
     def save_site_to_col(self, site_obj: Site, col):
+        url = f'{BASE}refresh_sites'
         sites_collection = self._db.collection(col)
         saved_doc_ref = sites_collection.document(str(site_obj.get_site_name()))
         site_json = json.dumps(site_obj.serialize(), cls=objects.Utils.JsonEncoder)
         saved_doc_ref.set(json.loads(site_json))
-        # TODO: use refresh_site and send {'site' : site_obj}
-        url = f'{BASE}refresh_sites'
         data = {'site': site_json}
-        # headers = {'Content-Type': 'application/json'}
-        # response = requests.put(url, data=data, headers=headers)
         response = requests.put(url, params=data)
         if response.status_code != 200:
             raise ValueError(f'error {response.status_code}\n{response.text}')

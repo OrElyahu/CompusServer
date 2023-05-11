@@ -29,12 +29,11 @@ for doc in db.collection('sites').stream():
     sites[doc.id] = val
 
 
-# TODO: refresh sites
 @app.route('/refresh_sites', methods=['PUT'])
 def refresh_sites():
     global sites
     parser = reqparse.RequestParser()
-    parser.add_argument('site', type=str, required=True, help="Invalid JSON object.")
+    parser.add_argument('site', type=str, required=True)
     args = parser.parse_args()
     site_json = args['site']
     site = None
