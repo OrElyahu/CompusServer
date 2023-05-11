@@ -3,4 +3,5 @@
 /config.json
 /authentication.py
 /.idea/*
+/imagesToUpload/*
 *.pyc

@@ -4,11 +4,13 @@ from typing import List
 
 import firebase_admin
 import requests
+
+import Server
 import objects.Utils
 from firebase_admin import firestore, credentials
 
-from objects.Graph import Graph
-from objects.Path import A11y
+from objects.Graph import Graph, Direction
+from objects.Path import A11y, Path
 from objects.Report import Report
 from objects.Site import Site
 from objects.Waypoint import Waypoint
@@ -22,8 +24,8 @@ class Test:
 
     def __init__(self):
         # In case server is running -> commit the cred initiation
-        self._cred = credentials.Certificate('admin-key.json')
-        firebase_admin.initialize_app(self._cred)
+        # self._cred = credentials.Certificate('admin-key.json')
+        # firebase_admin.initialize_app(self._cred)
         self._db = firestore.client()
 
     def get_site_from_col_doc(self, col, doc) -> Site:
@@ -39,8 +41,8 @@ class Test:
         sites_collection = self._db.collection(col)
         saved_doc_ref = sites_collection.document(str(site_obj.get_site_name()))
         site_json = json.dumps(site_obj.serialize(), cls=objects.Utils.JsonEncoder)
-        # print(site_json)
         saved_doc_ref.set(json.loads(site_json))
+        Server.sites[site_obj.get_site_name()] = site_obj
 
     def get_site(self, site_name) -> Site:
         url = f'{BASE}get_site'
@@ -110,13 +112,20 @@ class Test:
 
 
 res = Test()
+
+# restore
+# site = res.get_site_from_col_doc('sites_backup', 'Afeka')
+# res.save_site_to_col(site, 'sites')
+
+
+
 # get_site_from_col_doc
 # site = res.get_site_from_col_doc('sites', 'Afeka')
 # print(site)
 
 
 # save_site_to_col
-# res.save_site_to_col(site, 'sites_test')
+# res.save_site_to_col(site, 'sites')
 
 
 # get_site
@@ -139,20 +148,27 @@ res = Test()
 #     print(path)
 
 # add_wp_between
+print('#1:')
+print(Server.sites['Afeka'].get_graphs()[0])
 site = res.get_site('Afeka')
-wp_new = Waypoint('curb-ramps-outside', 'Ficus', 'Outside')
+wp_new = Waypoint('stairs-outside', 'Ficus', 'Outside')
 wp_1_id = 'location-entrance'
-wp_2_id = 'outside-left'
+wp_2_id = 'building-entrance'
 graph = site.get_graphs()[0]
 res.add_wp_between(graph, wp_new, wp_1_id, wp_2_id)
-res.save_site_to_col(site, 'sites_test')
+res.save_site_to_col(site, 'sites')
+# graph.add_connection('stairs-outside', 'curb-ramps-outside', Direction.LEFT, Path(3))
+# graph.add_connection('curb-ramps-outside', 'stairs-outside', Direction.UP, Path(5))
+# res.save_site_to_col(site, 'sites')
+print('#2:')
+print(Server.sites['Afeka'].get_graphs()[0])
+
 
 # add_wp_images
 # site = res.get_site('Afeka')
-# wp_new = Waypoint('curb-ramps-outside', 'Ficus', 'Outside')
+# wp_new = Waypoint('stairs-outside', 'Ficus', 'Outside')
 # response = res.add_wp_images('Afeka', 'Campus', wp_new)
 # print(response)
-
 
 
 # TODO: implement the following tests:
@@ -168,5 +184,3 @@ Rules To Validate:
     -) To be continued....:)
 
 '''
-
-

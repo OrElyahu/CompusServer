@@ -120,7 +120,6 @@ class Graph:
         self.del_oneway_connection(wp_src_id, wp_dst_id)
         self.del_oneway_connection(wp_dst_id, wp_src_id)
 
-    # TODO: fix bug
     def add_wp_between(self, new_wp: Waypoint, wp_1_id: str, wp_2_id: str,
                        t_from_1: int = 0, t_from_2: int = 0, a11y_from_1: List[A11y] = None,
                        a11y_from_2: List[A11y] = None):
@@ -144,8 +143,8 @@ class Graph:
         path_from_2.set_time(t_from_2 or t2)
         path_from_1.set_a11y(a11y_from_1 or path_from_1.get_a11y())
         path_from_2.set_a11y(a11y_from_2 or path_from_2.get_a11y())
-        self.add_connection(_id, wp_1_id, dir_from_1, path_from_1)
-        self.add_connection(_id, wp_2_id, dir_from_2, path_from_2)
+        self.add_connection(wp_1_id, _id, dir_from_1, path_from_1)
+        self.add_connection(wp_2_id, _id, dir_from_2, path_from_2)
 
     """'
     @Input: 2 WPs ids : start_id, end_id
