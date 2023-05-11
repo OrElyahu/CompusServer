@@ -28,9 +28,21 @@ for doc in db.collection('sites').stream():
     sites[doc.id] = val
 
 
-@app.route('/add_wp_between', methods=['POST'])
-def add_wp_between():
-    return {'success': 'Report added successfully'}, 200
+@app.route('/add_wp_images', methods=['POST'])
+def add_wp_images():
+    parser = reqparse.RequestParser()
+    images = [request.files.get(f'image-{direction}') for direction in ['up', 'down', 'left', 'right']]
+    allowed_extensions = {'.jpg', '.jpeg', '.png'}
+    if not all(os.path.splitext(image.filename)[1] in allowed_extensions for image in images):
+        abort(400, "Invalid image file(s). Only .jpg, .jpeg, and .png files are allowed.")
+
+    parser.add_argument('storage_path', type=str, required=True)
+    args = parser.parse_args()
+    bucket_path = args['storage_path']
+    for image in images:
+        bucket.blob(f'{bucket_path}/{image.filename}').upload_from_file(image, content_type='image/jpeg')
+
+    return {'success': 'Waypoint images added successfully'}, 200
 
 
 @app.route('/upload_report', methods=['POST'])
@@ -45,7 +57,7 @@ def upload_report():
     image_file = request.files['image']
     extension = os.path.splitext(image_file.filename)[1]
     if extension not in ['.jpg', '.jpeg', '.png']:
-        abort(400, f"File with extension : {extension} is invalid. Must be jpeg/jpg.")
+        abort(400, f"File with extension : {extension} is invalid. Must be jpeg/jpg/png.")
 
     args = parser.parse_args()
 

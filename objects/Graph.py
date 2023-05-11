@@ -88,7 +88,7 @@ class Graph:
             area = next((area for area in place.get_areas() if area.get_area_id() == wp.get_area_id()), None)
             area.add_wp_id(_id)
             self._wps[_id] = wp
-            self._wp_neighs[_id] = [None, None, None, None]
+            self._wp_neighs[_id] = ["", "", "", ""]
 
     def remove_wp(self, wp_id):
         if wp_id in self._wps:
@@ -112,7 +112,7 @@ class Graph:
             self._paths.pop(wp_src_id + '_' + wp_dst_id, None)
             src_neighs = self._wp_neighs[wp_src_id]
             try:
-                src_neighs[src_neighs.index(wp_dst_id)] = None
+                src_neighs[src_neighs.index(wp_dst_id)] = ""
             except ValueError:
                 pass
 
@@ -120,13 +120,13 @@ class Graph:
         self.del_oneway_connection(wp_src_id, wp_dst_id)
         self.del_oneway_connection(wp_dst_id, wp_src_id)
 
-    # TODO: add in the future folder_path to image files, validate exists with the right names (wp-dir)
-    def add_wp_between(self, new_wp: Waypoint, wp_1_id: str, wp_2_id: str, path='/imagesToUpload',
+    # TODO: fix bug
+    def add_wp_between(self, new_wp: Waypoint, wp_1_id: str, wp_2_id: str,
                        t_from_1: int = 0, t_from_2: int = 0, a11y_from_1: List[A11y] = None,
                        a11y_from_2: List[A11y] = None):
         _id = new_wp.get_id()
         if (_id in self._wps) or not (wp_1_id in self._wps and wp_2_id in self._wps):
-            return
+            return 'new waypoint already exists, or from waypoint do not exist'
 
         dir_from_1 = Direction(self._wp_neighs[wp_1_id].index(wp_2_id))
         dir_from_2 = Direction(self._wp_neighs[wp_2_id].index(wp_1_id))
