@@ -4,6 +4,7 @@ from typing import List
 
 import firebase_admin
 import requests
+import socket
 
 import Server
 import objects.Utils
@@ -16,6 +17,9 @@ from objects.Site import Site
 from objects.Waypoint import Waypoint
 
 IP = 'localhost'
+hostname = socket.gethostname()
+if hostname == "DESKTOP-A651GUV":
+    IP = socket.gethostbyname(hostname)
 PORT = '5000'
 BASE = f'http://{IP}:{PORT}/'
 
@@ -42,7 +46,8 @@ class Test:
         saved_doc_ref = sites_collection.document(str(site_obj.get_site_name()))
         site_json = json.dumps(site_obj.serialize(), cls=objects.Utils.JsonEncoder)
         saved_doc_ref.set(json.loads(site_json))
-        Server.sites[site_obj.get_site_name()] = site_obj
+        # Server.sites[site_obj.get_site_name()] = site_obj
+        # TODO: Replace with telling the server to update its sites from DB
 
     def get_site(self, site_name) -> Site:
         url = f'{BASE}get_site'
@@ -148,20 +153,25 @@ res = Test()
 #     print(path)
 
 # add_wp_between
-print('#1:')
-print(Server.sites['Afeka'].get_graphs()[0])
 site = res.get_site('Afeka')
-wp_new = Waypoint('stairs-outside', 'Ficus', 'Outside')
-wp_1_id = 'location-entrance'
-wp_2_id = 'building-entrance'
-graph = site.get_graphs()[0]
-res.add_wp_between(graph, wp_new, wp_1_id, wp_2_id)
+site = res.get_site_from_col_doc('sites', 'Afeka')
+res.add_wp_between(graph=site.get_graphs()[0],
+                   new_wp=Waypoint('stairs-outside', 'Ficus', 'Outside'),
+                   wp_1_id='location-entrance',
+                   wp_2_id='building-entrance')
+res.add_wp_between(graph=site.get_graphs()[0],
+                   new_wp=Waypoint('curb-ramps-outside', 'Ficus', 'Outside'),
+                   wp_1_id='location-entrance',
+                   wp_2_id='outside-left')
 res.save_site_to_col(site, 'sites')
+print(site)
+
+
+
+
 # graph.add_connection('stairs-outside', 'curb-ramps-outside', Direction.LEFT, Path(3))
 # graph.add_connection('curb-ramps-outside', 'stairs-outside', Direction.UP, Path(5))
 # res.save_site_to_col(site, 'sites')
-print('#2:')
-print(Server.sites['Afeka'].get_graphs()[0])
 
 
 # add_wp_images
