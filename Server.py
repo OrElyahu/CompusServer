@@ -1,4 +1,5 @@
 import argparse
+import json
 import os
 import uuid
 
@@ -26,6 +27,31 @@ for doc in db.collection('sites').stream():
     val = Site('', [], {})
     val.deserialize(site_json)
     sites[doc.id] = val
+
+
+# TODO: refresh sites
+@app.route('/refresh_sites', methods=['PUT'])
+def refresh_sites():
+    global sites
+    parser = reqparse.RequestParser()
+    parser.add_argument('site', type=str, required=True, help="Invalid JSON object.")
+    args = parser.parse_args()
+    site_json = args['site']
+    site = None
+    try:
+        site_data = json.loads(site_json)
+        site = Site('', [], {})
+        site.deserialize(site_data)
+    except json.JSONDecodeError:
+        abort(400, "Invalid JSON object. 'site' value should be a valid JSON.")
+
+    # Fetch the updated sites from the database
+    for doc in db.collection('sites').stream():
+        if doc.id == site.get_site_name():
+            sites[doc.id] = site
+            return {'success': f'Site {site.get_site_name()} refreshed successfully'}, 200
+
+    abort(404, f"Site '{site.get_site_name()}' not found")
 
 
 @app.route('/add_wp_images', methods=['POST'])

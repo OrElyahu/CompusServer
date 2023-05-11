@@ -46,8 +46,15 @@ class Test:
         saved_doc_ref = sites_collection.document(str(site_obj.get_site_name()))
         site_json = json.dumps(site_obj.serialize(), cls=objects.Utils.JsonEncoder)
         saved_doc_ref.set(json.loads(site_json))
-        # Server.sites[site_obj.get_site_name()] = site_obj
-        # TODO: Replace with telling the server to update its sites from DB
+        # TODO: use refresh_site and send {'site' : site_obj}
+        url = f'{BASE}refresh_sites'
+        data = {'site': site_json}
+        # headers = {'Content-Type': 'application/json'}
+        # response = requests.put(url, data=data, headers=headers)
+        response = requests.put(url, params=data)
+        if response.status_code != 200:
+            raise ValueError(f'error {response.status_code}\n{response.text}')
+        return response.json()
 
     def get_site(self, site_name) -> Site:
         url = f'{BASE}get_site'
@@ -123,7 +130,6 @@ res = Test()
 # res.save_site_to_col(site, 'sites')
 
 
-
 # get_site_from_col_doc
 # site = res.get_site_from_col_doc('sites', 'Afeka')
 # print(site)
@@ -154,19 +160,17 @@ res = Test()
 
 # add_wp_between
 site = res.get_site('Afeka')
-site = res.get_site_from_col_doc('sites', 'Afeka')
-res.add_wp_between(graph=site.get_graphs()[0],
-                   new_wp=Waypoint('stairs-outside', 'Ficus', 'Outside'),
-                   wp_1_id='location-entrance',
-                   wp_2_id='building-entrance')
-res.add_wp_between(graph=site.get_graphs()[0],
-                   new_wp=Waypoint('curb-ramps-outside', 'Ficus', 'Outside'),
-                   wp_1_id='location-entrance',
-                   wp_2_id='outside-left')
-res.save_site_to_col(site, 'sites')
-print(site)
-
-
+# site = res.get_site_from_col_doc('sites', 'Afeka')
+# res.add_wp_between(graph=site.get_graphs()[0],
+#                    new_wp=Waypoint('stairs-outside', 'Ficus', 'Outside'),
+#                    wp_1_id='location-entrance',
+#                    wp_2_id='building-entrance')
+# res.add_wp_between(graph=site.get_graphs()[0],
+#                    new_wp=Waypoint('curb-ramps-outside', 'Ficus', 'Outside'),
+#                    wp_1_id='location-entrance',
+#                    wp_2_id='outside-left')
+# res.save_site_to_col(site, 'sites')
+# print(site)
 
 
 # graph.add_connection('stairs-outside', 'curb-ramps-outside', Direction.LEFT, Path(3))
