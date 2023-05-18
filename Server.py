@@ -22,7 +22,7 @@ db = firestore.client()
 bucket = storage.bucket('navigate-a1e16.appspot.com')
 
 sites = {}
-for doc in db.collection('sites_test').stream():
+for doc in db.collection('sites').stream():
     site_json = doc.to_dict()
     val = Site('', [], {})
     val.deserialize(site_json)

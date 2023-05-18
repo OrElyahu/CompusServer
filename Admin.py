@@ -6,6 +6,7 @@ import socket
 
 import firebase_admin
 import requests
+from google.api_core.retry import Retry
 
 import objects.Utils
 from firebase_admin import credentials, firestore, storage
@@ -89,7 +90,13 @@ class Admin:
 
         bucket_path = f'sites/{site_name}/graphs/{graph_id}/places/{wp.get_place_id()}/areas/{wp.get_area_id()}'
         for image_name, image in images.items():
-            self.bucket.blob(f'{bucket_path}/{image_name}').upload_from_file(image, content_type='image/jpeg')
+            self.bucket.blob(f'{bucket_path}/{image_name}').upload_from_file(image, content_type='image/jpeg',
+                                                                             retry=Retry(maximum=3))
+
+    ''''
+    @param: Site object, collection name, Graph name, wp_old id, wp_new id
+    @output: Change wp id in Site object, serialize to DB, and change images name accordingly in Storage
+    '''''
 
     def rename_wp(self, site_obj, col, graph_name, wp_old, wp_new):
         graph = site_obj.get_graph_by_name(graph_name)
@@ -113,31 +120,17 @@ class Admin:
             new_file_blob = self.bucket.blob(new_file_path)
             if old_file_blob.exists():
                 new_file_blob.upload_from_file(io.BytesIO(old_file_blob.download_as_bytes()),
-                                               content_type=old_file_blob.content_type, rewind=True)
-                old_file_blob.delete()
+                                               content_type=old_file_blob.content_type, retry=Retry(maximum=3))
+                old_file_blob.delete(retry=Retry(maximum=3))
 
 
 db = Admin()
-site = db.get_site_from_col_doc('sites_test', 'Afeka')
+site = db.get_site_from_col_doc('sites', 'Afeka')
 graph_name = 'Campus'
-wp_old = '3301'
-wp_new = '301'
-res = db.rename_wp(site, 'sites_test', graph_name, wp_old, wp_new)
+wp_old = '301'
+wp_new = '301new'
+res = db.rename_wp(site, 'sites', graph_name, wp_old, wp_new)
 if isinstance(res, str):
     print(f'Error : {res}')
 
-# TODO: implement the following tests:
-'''
-***********************
-Rules To Validate:
-***********************
-    -) All POIS and WP_ids are unique, even with multiple graphs
-    -) All reports have images in Storage with the same name as the report id
-    -) All waypoints, according to neighbors, have the required paths
-    -) All waypoints show up in both their graph's wps, and in area's wps, and the WP obj details the right area+place
-    -) Path names are in format : 'wpId1_wpId2'
-    -) To be continued....:)
-    -) All waypoints can not contain the symbols underscore ('_')
-    -) Save objects -> direct to DB (no URLS)
 
-'''
