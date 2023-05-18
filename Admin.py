@@ -121,6 +121,7 @@ class Admin:
             if old_file_blob.exists():
                 new_file_blob.upload_from_file(io.BytesIO(old_file_blob.download_as_bytes()),
                                                content_type=old_file_blob.content_type, retry=Retry(maximum=3))
+                old_file_blob = self.bucket.blob(old_file_path)  # necessary to refresh it, reload doesn't work either
                 old_file_blob.delete(retry=Retry(maximum=3))
 
 
