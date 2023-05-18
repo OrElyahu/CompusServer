@@ -1,5 +1,6 @@
 import json
 import os
+import io
 from typing import List
 import socket
 
@@ -94,48 +95,33 @@ class Admin:
         graph = site_obj.get_graph_by_name(graph_name)
         if not graph:
             return 'Graph not found'
-        # graph.rename_wp(wp_old, wp_new)
-        # self.save_site_to_col(site_obj, col)
-        #
-        # # refresh site in Server objects in sites
-        # url = f'{BASE}refresh_sites'
-        # response = requests.put(url, params={'site_name': site_obj.get_site_name()})
-        # if response.status_code != 200:
-        #     return f'error {response.status_code}\n{response.text}'
+        wp = graph.get_wps()[wp_old]
+        graph.rename_wp(wp_old, wp_new)
+        self.save_site_to_col(site_obj, col)
 
-        wp_new = wp_old # TODO: delete
-        wp = graph.get_wps()[wp_new]
+        # refresh site in Server objects in sites
+        url = f'{BASE}refresh_sites'
+        response = requests.put(url, params={'site_name': site_obj.get_site_name()})
+        if response.status_code != 200:
+            return f'error {response.status_code}\n{response.text}'
         storage_path = f'sites/{site_obj.get_site_name()}/graphs/{graph_name}/places/{wp.get_place_id()}/areas/{wp.get_area_id()}'
         directions = ['down', 'up', 'left', 'right']
-        allowed_extensions = '.jpg'
-        images = {}
-        for direction in directions:
-            image_file = os.path.join(wp_old, '-' + direction + allowed_extensions)
-            if not os.path.isfile(image_file):
-                return f"Image file '{image_file}' does not exist"
-            images[f'image{direction}'] = open(image_file, 'rb')
-            requests.get(url=)
-
-
         for direction in directions:
             old_file_path = f'{storage_path}/{wp_old}-{direction}.jpg'
             new_file_path = f'{storage_path}/{wp_new}-{direction}.jpg'
-            old_file = self.bucket.blob(old_file_path)
-            new_file = self.bucket.blob(new_file_path)
-            if old_file.exists():
-
-                new_file.upload_from_string(old_file.download_as_string(), content_type=old_file.content_type)
-                # old_file.delete()
-
-            # OLD_CODE
-            self.bucket.blob(f'{bucket_path}/{image_name}').upload_from_file(image, content_type='image/jpeg')
+            old_file_blob = self.bucket.blob(old_file_path)
+            new_file_blob = self.bucket.blob(new_file_path)
+            if old_file_blob.exists():
+                new_file_blob.upload_from_file(io.BytesIO(old_file_blob.download_as_bytes()),
+                                               content_type=old_file_blob.content_type, rewind=True)
+                old_file_blob.delete()
 
 
 db = Admin()
 site = db.get_site_from_col_doc('sites_test', 'Afeka')
 graph_name = 'Campus'
-wp_old = '301'
-wp_new = '3301'
+wp_old = '3301'
+wp_new = '301'
 res = db.rename_wp(site, 'sites_test', graph_name, wp_old, wp_new)
 if isinstance(res, str):
     print(f'Error : {res}')
