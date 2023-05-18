@@ -120,6 +120,38 @@ class Graph:
         self.del_oneway_connection(wp_src_id, wp_dst_id)
         self.del_oneway_connection(wp_dst_id, wp_src_id)
 
+    def rename_wp(self, wp_id, new_wp_id):
+        if wp_id not in self._wps:
+            return f'waypoint {wp_id} does not exist'
+        if new_wp_id in self._wps:
+            return f'waypoint {new_wp_id} already exist'
+
+        self._wps[new_wp_id] = self._wps.pop(wp_id) # Changed in dict
+        wp_obj = self._wps[new_wp_id]   # received Waypoint
+        wp_obj.set_id(new_wp_id)        # Changed in Waypoint class
+        area = self.get_place_by_name(wp_obj.get_place_id()).get_area_by_id(wp_obj.get_area_id())
+        area.remove_wp_id(wp_id)        # Delete from area set
+        area.add_wp_id(new_wp_id)       # Add to area set
+        if wp_id in self._wp_neighs:
+            self._wp_neighs[new_wp_id] = self._wp_neighs.pop(wp_id) # Changed in dict
+        for ls in self._wp_neighs.values():
+            ls[:] = [new_wp_id if item == wp_id else item for item in ls] # replace wp_id with new_wp_id
+        self._poi_wps = {key: new_wp_id if value == wp_id else value for key, value in self._poi_wps.items()}
+
+        paths = self._paths.copy()
+
+        for path_id in self._paths:
+            parts = path_id.split('_')
+            if wp_id in parts:
+                parts[parts.index(wp_id)] = new_wp_id
+                paths['_'.join(parts)] = paths.pop(path_id)
+
+        self._paths = paths
+
+
+    def get_place_by_name(self, place_name) -> Place:
+        return next((place for place in self._places if place.get_place_name() == place_name), None)
+
     def add_wp_between(self, new_wp: Waypoint, wp_1_id: str, wp_2_id: str,
                        t_from_1: int = 0, t_from_2: int = 0, a11y_from_1: List[A11y] = None,
                        a11y_from_2: List[A11y] = None):

@@ -119,12 +119,25 @@ class Test:
 
         return response.json()
 
+    def rename_wp(self, site_name, graph_name, wp_old, wp_new):
+        url = f'{BASE}rename_wp'
+        data = {
+            'site_name': site_name,
+            'graph_name': graph_name,
+            'wp_old': wp_old,
+            'wp_new': wp_new}
+        response = requests.put(url, data=data)
+        if response.status_code != 200:
+            raise ValueError(f'error {response.status_code}\n{response.text}')
+
+        return response.json()
+
 
 res = Test()
 
 # restore
-# site = res.get_site_from_col_doc('sites_backup', 'Afeka')
-# res.save_site_to_col(site, 'sites')
+# site = res.get_site_from_col_doc('sites_test', 'Afeka')
+# res.save_site_to_col(site, 'sites_test')
 
 
 # get_site_from_col_doc
@@ -156,7 +169,7 @@ res = Test()
 #     print(path)
 
 # add_wp_between
-site = res.get_site('Afeka')
+# site = res.get_site('Afeka')
 # site = res.get_site_from_col_doc('sites', 'Afeka')
 # res.add_wp_between(graph=site.get_graphs()[0],
 #                    new_wp=Waypoint('stairs-outside', 'Ficus', 'Outside'),
@@ -182,6 +195,9 @@ site = res.get_site('Afeka')
 # print(response)
 
 
+# rename wp
+res.rename_wp('Afeka', 'Campus', '301', '3301')
+
 # TODO: implement the following tests:
 '''
 ***********************
@@ -193,5 +209,7 @@ Rules To Validate:
     -) All waypoints show up in both their graph's wps, and in area's wps, and the WP obj details the right area+place
     -) Path names are in format : 'wpId1_wpId2'
     -) To be continued....:)
+    -) All waypoints can not contain the symbols underscore ('_')
+    -) Save objects -> direct to DB (no URLS)
 
 '''

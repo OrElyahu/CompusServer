@@ -22,11 +22,48 @@ db = firestore.client()
 bucket = storage.bucket('navigate-a1e16.appspot.com')
 
 sites = {}
-for doc in db.collection('sites').stream():
+for doc in db.collection('sites_test').stream():
     site_json = doc.to_dict()
     val = Site('', [], {})
     val.deserialize(site_json)
     sites[doc.id] = val
+
+
+@app.route('/rename_wp', methods=['PUT'])
+def rename_wp():
+    global sites
+    parser = reqparse.RequestParser()
+    parser.add_argument('site_name', type=str, required=True)
+    parser.add_argument('graph_name', type=str, required=True)
+    parser.add_argument('wp_old', type=str, required=True)
+    parser.add_argument('wp_new', type=str, required=True)
+    args = parser.parse_args()
+    site_name = args['site_name']
+    graph_name = args['graph_name']
+    wp_old = args['wp_old']
+    wp_new = args['wp_new']
+    if site_name not in sites:
+        abort(404, f"Site : {site_name} not found")
+    site = sites[site_name]
+    graph = site.get_graph_by_name(graph_name)
+    if not graph:
+        abort(404, f"Graph : {graph_name} not found")
+    graph.rename_wp(wp_old, wp_new)
+    wp = graph.get_wps()[wp_new]
+    # storage_path = f'sites/{site_name}/graphs/{graph_name}/places/{wp.get_place_id()}/areas/{wp.get_area_id()}'
+    # directions = ['down', 'up', 'left', 'right']
+    # for direction in directions:
+    #     old_file_path = os.path.join(storage_path, f'{wp_old}-{direction}.jpg')
+    #     new_file_path = os.path.join(storage_path, f'{wp_new}-{direction}.jpg')
+    #     if os.path.exists(old_file_path):
+    #         os.rename(old_file_path, new_file_path)
+
+    for doc in db.collection('sites_test').stream():
+        if doc.id == site.get_site_name():
+            sites[doc.id] = site
+            return {'success': f'Site {doc.id} refreshed successfully'}, 200
+
+    abort(404, f"Site : {site_name} not found")
 
 
 @app.route('/refresh_sites', methods=['PUT'])
@@ -48,7 +85,7 @@ def refresh_sites():
     for doc in db.collection('sites').stream():
         if doc.id == site.get_site_name():
             sites[doc.id] = site
-            return {'success': f'Site {site.get_site_name()} refreshed successfully'}, 200
+            return {'success': f'Site {doc.id} refreshed successfully'}, 200
 
     abort(404, f"Site '{site.get_site_name()}' not found")
 

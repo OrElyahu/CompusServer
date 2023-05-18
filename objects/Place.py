@@ -28,6 +28,9 @@ class Place:
     def remove_area(self, area_id):
         self._areas = [area for area in self._areas if area.get_area_id() != area_id]
 
+    def get_area_by_id(self, area_id: str) -> Area:
+        return next((area for area in self._areas if area.get_area_id() == area_id), None)
+
     def __eq__(self, obj):
         return isinstance(obj, Place) and self._place_name == obj._place_name
 

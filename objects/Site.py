@@ -18,6 +18,9 @@ class Site:
     def get_graphs(self) -> List[Graph]:
         return self._graphs
 
+    def get_graph_by_name(self, graph_name) -> Graph:
+        return next((graph for graph in self._graphs if graph.get_graph_name() == graph_name), None)
+
     def set_graphs(self, graphs: List[Graph]):
         self._graphs = graphs
 
