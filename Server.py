@@ -70,24 +70,18 @@ def rename_wp():
 def refresh_sites():
     global sites
     parser = reqparse.RequestParser()
-    parser.add_argument('site', type=str, required=True)
+    parser.add_argument('site_name', type=str, required=True)
     args = parser.parse_args()
-    site_json = args['site']
-    site = None
-    try:
-        site_data = json.loads(site_json)
-        site = Site('', [], {})
-        site.deserialize(site_data)
-    except json.JSONDecodeError:
-        abort(400, "Invalid JSON object. 'site' value should be a valid JSON.")
-
-    # Fetch the updated sites from the database
-    for doc in db.collection('sites').stream():
-        if doc.id == site.get_site_name():
+    site_name = args['site_name']
+    for doc in db.collection('sites_test').stream(): # TODO change to sites
+        if doc.id == site_name:
+            site_data = doc.to_dict()
+            site = Site('', [], {})
+            site.deserialize(site_data)
             sites[doc.id] = site
-            return {'success': f'Site {doc.id} refreshed successfully'}, 200
+            return {'success': f'Site {site_name} refreshed successfully'}, 200
 
-    abort(404, f"Site '{site.get_site_name()}' not found")
+    abort(404, f"Site '{site_name}' not found")
 
 
 @app.route('/add_wp_images', methods=['POST'])
