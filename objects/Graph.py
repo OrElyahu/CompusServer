@@ -236,11 +236,14 @@ class Graph:
             for _id in neigh_ids:
                 path_id = f'{curr_wp_id}_{_id}'
                 if _id and _id not in visited and path_id in accessible_paths:
-                    cur_dis = distances[curr_wp_id]
-                    if type(cur_dis) is tuple:
-                        cur_dis = cur_dis[0]
-                    new_distance = cur_dis + accessible_paths[path_id].get_time()
-                    if new_distance < distances[_id]:
+                    curr_dis = distances[curr_wp_id]
+                    if type(curr_dis) is tuple:
+                        curr_dis = curr_dis[0]
+                    new_distance = curr_dis + accessible_paths[path_id].get_time()
+                    dist = distances[_id]
+                    if type(dist) is tuple:
+                        dist = dist[0]
+                    if new_distance < dist:
                         distances[_id] = (new_distance, curr_wp_id)
                         heapq.heappush(heap, (new_distance, _id))
 
