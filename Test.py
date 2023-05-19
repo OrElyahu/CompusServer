@@ -43,11 +43,11 @@ class Test:
         ret_val.deserialize(site_data)
         return ret_val
 
-    def shortest_path(self, site_name, wp_id_src, wp_id_dest, a11y=None):
+    def shortest_path(self, site_name, wp_id_src, wp_id_dst, a11y=None):
         url = f'{BASE}shortest_path'
         params = {'site_name': site_name,
                   'wp_id_src': wp_id_src,
-                  'wp_id_dest': wp_id_dest,
+                  'wp_id_dst': wp_id_dst,
                   'a11y': a11y}
         response = requests.get(url, params=params)
         if response.status_code != 200:

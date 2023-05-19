@@ -150,7 +150,7 @@ def shortest_path():
     parser = reqparse.RequestParser()
     parser.add_argument('site_name', type=str, required=True)
     parser.add_argument('wp_id_src', type=str, required=True)
-    parser.add_argument('wp_id_dest', type=str, required=True)
+    parser.add_argument('wp_id_dst', type=str, required=True)
     parser.add_argument('a11y', type=str, default=A11y.WALK.name)
     args = {}
     try:
@@ -160,7 +160,7 @@ def shortest_path():
 
     site_name = args['site_name']
     wp_id_src = args['wp_id_src']
-    wp_id_dest = args['wp_id_dest']
+    wp_id_dst = args['wp_id_dst']
 
     if args['a11y'] not in A11y.__members__:
         abort(400, f"param {args['a11y']} is not given properly")
@@ -172,19 +172,19 @@ def shortest_path():
     site = sites[site_name]
     graphs = site.get_graphs()
     start_graph = next((graph for graph in graphs if wp_id_src in graph.get_wps()), None)
-    end_graph = next((graph for graph in graphs if wp_id_dest in graph.get_wps()), None)
+    end_graph = next((graph for graph in graphs if wp_id_dst in graph.get_wps()), None)
     if not start_graph:
         abort(404, f"Point of interest: {wp_id_src} not found in {site_name}")
     if not end_graph:
-        abort(404, f"Point of interest: {wp_id_dest} not found in {site_name}")
+        abort(404, f"Point of interest: {wp_id_dst} not found in {site_name}")
     if start_graph is not end_graph:
         # TODO: handle multiple graphs
         abort(501, f"Point of interests found in separate locations in {site_name}, "
                    f"navigation between them not implemented yet.")
     graph = start_graph
-    short_path = graph.shortest_path(wp_id_src, wp_id_dest, a11y)
+    short_path = graph.shortest_path(wp_id_src, wp_id_dst, a11y)
     if not short_path:
-        abort(404, f"Unable to find path from {wp_id_src} to {wp_id_dest}")
+        abort(404, f"Unable to find path from {wp_id_src} to {wp_id_dst}")
     return jsonify(short_path)
 
 
