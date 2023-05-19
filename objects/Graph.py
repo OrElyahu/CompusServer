@@ -84,8 +84,8 @@ class Graph:
     def add_wp(self, wp: Waypoint):
         _id = wp.get_id()
         if _id not in self._wps:
-            place = next((place for place in self._places if place.get_place_name() == wp.get_place_id()), None)
-            area = next((area for area in place.get_areas() if area.get_area_id() == wp.get_area_id()), None)
+            place = self.get_place_by_name(wp.get_place_id())
+            area = place.get_area_by_id(wp.get_area_id())
             area.add_wp_id(_id)
             self._wps[_id] = wp
             self._wp_neighs[_id] = ["", "", "", ""]

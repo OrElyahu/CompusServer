@@ -10,7 +10,11 @@ from google.api_core.retry import Retry
 
 import objects.Utils
 from firebase_admin import credentials, firestore, storage
-from objects.Path import A11y
+
+from objects.Area import Area
+from objects.Graph import Direction
+from objects.Path import A11y, Path
+from objects.Place import Place
 from objects.Site import Site
 from objects.Waypoint import Waypoint
 
@@ -86,12 +90,12 @@ class Admin:
             image_file = os.path.join(image_path, wp.get_id() + direction + allowed_extensions)
             if not os.path.isfile(image_file):
                 return f"Image file '{image_file}' does not exist"
-            images[f'image{direction}'] = open(image_file, 'rb')
+            images[f'{wp.get_id()}{direction}'] = open(image_file, 'rb')
 
         bucket_path = f'sites/{site_name}/graphs/{graph_id}/places/{wp.get_place_id()}/areas/{wp.get_area_id()}'
         for image_name, image in images.items():
-            self.bucket.blob(f'{bucket_path}/{image_name}').upload_from_file(image, content_type='image/jpeg',
-                                                                             retry=Retry(maximum=3))
+            self.bucket.blob(f'{bucket_path}/{image_name}.jpg').upload_from_file(image, content_type='image/jpeg',
+                                                                                 retry=Retry(maximum=3))
 
     ''''
     @param: Site object, collection name, Graph name, wp_old id, wp_new id
@@ -128,10 +132,19 @@ class Admin:
 db = Admin()
 site = db.get_site_from_col_doc('sites', 'Afeka')
 graph_name = 'Campus'
-wp_old = '301'
-wp_new = '301new'
-res = db.rename_wp(site, 'sites', graph_name, wp_old, wp_new)
-if isinstance(res, str):
-    print(f'Error : {res}')
+graph = site.get_graph_by_name(graph_name)
+graph.add_connection('street1', 'location-entrance', Direction.UP, Path(2))
+db.save_site_to_col(site, 'sites')
 
+# graph.add_oneway_connection('curb-ramps-outside', 'outside-left', Direction.LEFT, Path(2))
+# graph.add_oneway_connection('stairs-outside', 'building-entrance', Direction.UP, Path(2))
+# db.save_site_to_col(site, 'sites')
 
+# def rename_wp_example():
+#     site = db.get_site_from_col_doc('sites', 'Afeka')
+#     graph_name = 'Campus'
+#     wp_old = '301'
+#     wp_new = '301'
+#     res = db.rename_wp(site, 'sites', graph_name, wp_old, wp_new)
+#     if isinstance(res, str):
+#         print(f'Error : {res}')
