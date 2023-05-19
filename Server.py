@@ -171,8 +171,8 @@ def shortest_path():
 
     site = sites[site_name]
     graphs = site.get_graphs()
-    start_graph = next((graph for graph in graphs if wp_id_src in graph.get_poi_wps()), None)
-    end_graph = next((graph for graph in graphs if wp_id_dest in graph.get_poi_wps()), None)
+    start_graph = next((graph for graph in graphs if wp_id_src in graph.get_wps()), None)
+    end_graph = next((graph for graph in graphs if wp_id_dest in graph.get_wps()), None)
     if not start_graph:
         abort(404, f"Point of interest: {wp_id_src} not found in {site_name}")
     if not end_graph:
