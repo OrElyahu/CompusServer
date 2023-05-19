@@ -149,8 +149,8 @@ def get_site():
 def shortest_path():
     parser = reqparse.RequestParser()
     parser.add_argument('site_name', type=str, required=True)
-    parser.add_argument('poi_start', type=str, required=True)
-    parser.add_argument('poi_end', type=str, required=True)
+    parser.add_argument('wp_id_src', type=str, required=True)
+    parser.add_argument('wp_id_dest', type=str, required=True)
     parser.add_argument('a11y', type=str, default=A11y.WALK.name)
     args = {}
     try:
@@ -159,8 +159,8 @@ def shortest_path():
         abort(400, f"Params not given properly.")
 
     site_name = args['site_name']
-    poi_start = args['poi_start']
-    poi_end = args['poi_end']
+    wp_id_src = args['wp_id_src']
+    wp_id_dest = args['wp_id_dest']
 
     if args['a11y'] not in A11y.__members__:
         abort(400, f"param {args['a11y']} is not given properly")
@@ -171,22 +171,20 @@ def shortest_path():
 
     site = sites[site_name]
     graphs = site.get_graphs()
-    start_graph = next((graph for graph in graphs if poi_start in graph.get_poi_wps()), None)
-    end_graph = next((graph for graph in graphs if poi_end in graph.get_poi_wps()), None)
+    start_graph = next((graph for graph in graphs if wp_id_src in graph.get_poi_wps()), None)
+    end_graph = next((graph for graph in graphs if wp_id_dest in graph.get_poi_wps()), None)
     if not start_graph:
-        abort(404, f"Point of interest: {poi_start} not found in {site_name}")
+        abort(404, f"Point of interest: {wp_id_src} not found in {site_name}")
     if not end_graph:
-        abort(404, f"Point of interest: {poi_end} not found in {site_name}")
+        abort(404, f"Point of interest: {wp_id_dest} not found in {site_name}")
     if start_graph is not end_graph:
         # TODO: handle multiple graphs
         abort(501, f"Point of interests found in separate locations in {site_name}, "
                    f"navigation between them not implemented yet.")
     graph = start_graph
-    start_id = graph.get_poi_wps()[poi_start]
-    end_id = graph.get_poi_wps()[poi_end]
-    short_path = graph.shortest_path(start_id, end_id, a11y)
+    short_path = graph.shortest_path(wp_id_src, wp_id_dest, a11y)
     if not short_path:
-        abort(404, f"Unable to find path from {poi_start} to {poi_end}")
+        abort(404, f"Unable to find path from {wp_id_src} to {wp_id_dest}")
     return jsonify(short_path)
 
 
