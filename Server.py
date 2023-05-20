@@ -88,7 +88,6 @@ def refresh_sites():
 def upload_report():
     parser = reqparse.RequestParser()
     report_id = str(uuid.uuid4())
-    parser.add_argument('reporter_email', type=str, required=True)
     parser.add_argument('description', type=str, required=True)
     parser.add_argument('wp_id', type=str, required=True)
     parser.add_argument('direction', type=int, required=True)
@@ -106,8 +105,7 @@ def upload_report():
     url = blob.public_url
 
     report_ref = db.collection('reports')
-    report_data = {'reporter_email': args['reporter_email'],
-                   'description': args['description'],
+    report_data = {'description': args['description'],
                    'wp_id': args['wp_id'],
                    'direction': args['direction'],
                    'site_name': args['site_name']}

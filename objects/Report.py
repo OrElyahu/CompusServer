@@ -1,8 +1,7 @@
 class Report:
 
-    def __init__(self, report_id, reporter_email, description, wp_id, direction, site_name):
+    def __init__(self, report_id, description, wp_id, direction, site_name):
         self._report_id = report_id
-        self._reporter_email = reporter_email
         self._description = description
         self._wp_id = wp_id
         self._direction = direction
@@ -13,12 +12,6 @@ class Report:
 
     def set_report_id(self, report_id):
         self._report_id = report_id
-
-    def get_reporter_email(self):
-        return self._reporter_email
-
-    def set_reporter_email(self, reporter_email):
-        self._reporter_email = reporter_email
 
     def get_description(self):
         return self._description
@@ -46,7 +39,6 @@ class Report:
 
     def serialize(self):
         return {'report_id': self.get_report_id(),
-                'reporter_email': self.get_reporter_email(),
                 'description': self.get_description(),
                 'wp_id': self.get_wp_id(),
                 'direction': self.get_direction(),
@@ -54,7 +46,6 @@ class Report:
 
     def deserialize(self, data):
         self._report_id = data['report_id']
-        self._reporter_email = data['reporter_email']
         self._description = data['description']
         self._wp_id = data['wp_id']
         self._direction = data['direction']

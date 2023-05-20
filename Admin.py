@@ -131,10 +131,10 @@ class Admin:
 
 db = Admin()
 site = db.get_site_from_col_doc('sites', 'Afeka')
-graph_name = 'Campus'
-graph = site.get_graph_by_name(graph_name)
-graph.add_connection('street1', 'location-entrance', Direction.UP, Path(2))
-db.save_site_to_col(site, 'sites')
+# graph_name = 'Campus'
+# graph = site.get_graph_by_name(graph_name)
+# graph.add_connection('street1', 'location-entrance', Direction.UP, Path(2))
+db.save_site_to_col(site, 'sites_backup')
 
 # graph.add_oneway_connection('curb-ramps-outside', 'outside-left', Direction.LEFT, Path(2))
 # graph.add_oneway_connection('stairs-outside', 'building-entrance', Direction.UP, Path(2))
