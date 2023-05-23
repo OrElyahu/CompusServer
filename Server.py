@@ -29,43 +29,6 @@ for doc in db.collection('sites').stream():
     sites[doc.id] = val
 
 
-@app.route('/rename_wp', methods=['PUT'])
-def rename_wp():
-    global sites
-    parser = reqparse.RequestParser()
-    parser.add_argument('site_name', type=str, required=True)
-    parser.add_argument('graph_name', type=str, required=True)
-    parser.add_argument('wp_old', type=str, required=True)
-    parser.add_argument('wp_new', type=str, required=True)
-    args = parser.parse_args()
-    site_name = args['site_name']
-    graph_name = args['graph_name']
-    wp_old = args['wp_old']
-    wp_new = args['wp_new']
-    if site_name not in sites:
-        abort(404, f"Site : {site_name} not found")
-    site = sites[site_name]
-    graph = site.get_graph_by_name(graph_name)
-    if not graph:
-        abort(404, f"Graph : {graph_name} not found")
-    graph.rename_wp(wp_old, wp_new)
-    wp = graph.get_wps()[wp_new]
-    # storage_path = f'sites/{site_name}/graphs/{graph_name}/places/{wp.get_place_id()}/areas/{wp.get_area_id()}'
-    # directions = ['down', 'up', 'left', 'right']
-    # for direction in directions:
-    #     old_file_path = os.path.join(storage_path, f'{wp_old}-{direction}.jpg')
-    #     new_file_path = os.path.join(storage_path, f'{wp_new}-{direction}.jpg')
-    #     if os.path.exists(old_file_path):
-    #         os.rename(old_file_path, new_file_path)
-
-    for doc in db.collection('sites_test').stream():
-        if doc.id == site.get_site_name():
-            sites[doc.id] = site
-            return {'success': f'Site {doc.id} refreshed successfully'}, 200
-
-    abort(404, f"Site : {site_name} not found")
-
-
 @app.route('/refresh_sites', methods=['PUT'])
 def refresh_sites():
     global sites
@@ -73,7 +36,7 @@ def refresh_sites():
     parser.add_argument('site_name', type=str, required=True)
     args = parser.parse_args()
     site_name = args['site_name']
-    for doc in db.collection('sites_test').stream(): # TODO change to sites
+    for doc in db.collection('sites_test').stream():  # TODO change to sites
         if doc.id == site_name:
             site_data = doc.to_dict()
             site = Site('', [], {})
@@ -129,6 +92,20 @@ def get_site_images():
     return jsonify({os.path.splitext(os.path.basename(blob.name))[0]: blob.public_url
                     for blob in bucket.list_blobs(prefix=folder_name)
                     if blob.name.endswith(('jpg', 'jpeg', 'png'))})
+
+
+@app.route('/get_site_list', methods=['GET'])
+def get_sites_list():
+    sites_list = {}
+    for doc in db.collection('sites').stream():
+        key = doc.id
+        # graph_list = doc.get('graphs', [])
+
+        val = [graph.get('graph_name') for graph in doc.get('graphs')]
+
+        sites_list[key] = val
+
+    return jsonify(sites_list)
 
 
 @app.route('/get_site', methods=['GET'])

@@ -130,11 +130,23 @@ class Admin:
 
 
 db = Admin()
-site = db.get_site_from_col_doc('sites', 'Afeka')
-# graph_name = 'Campus'
-# graph = site.get_graph_by_name(graph_name)
-# graph.add_connection('street1', 'location-entrance', Direction.UP, Path(2))
+site = db.get_site_from_col_doc('sites_backup', 'Afeka')
+
+# print(site)
+graph_name = 'Campus'
+graph = site.get_graph_by_name(graph_name)
+wps = graph.get_wps()
+wps['301'].set_pos({'x': 1920, 'y': 210})
+wps['302'].set_pos({'x': 1920, 'y': 840})
+wps['304'].set_pos({'x': 1520, 'y': 840})
+wps['stairs-down'].set_pos({'x': 1800, 'y': 520})
+wps['floor-3-bathroom'].set_pos({'x': 1220, 'y': 270})
+wps['academic-faculty'].set_pos({'x': 1000, 'y': 780})
+
+print(graph)
 db.save_site_to_col(site, 'sites_backup')
+# graph.add_connection('street1', 'location-entrance', Direction.UP, Path(2))
+# db.save_site_to_col(site, 'sites_backup')
 
 # graph.add_oneway_connection('curb-ramps-outside', 'outside-left', Direction.LEFT, Path(2))
 # graph.add_oneway_connection('stairs-outside', 'building-entrance', Direction.UP, Path(2))

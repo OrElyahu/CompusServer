@@ -55,12 +55,19 @@ class Test:
 
         return response.json()
 
+    def get_sites_list(self):
+        url = f'{BASE}get_site_list'
+        response = requests.get(url)
+        if response.status_code != 200:
+            raise ValueError(f'error {response.status_code}\n{response.text}')
+
+        return response.json()
+
 
 
 res = Test()
-paths = res.shortest_path('Afeka', 'location-entrance', '301')
-for path in paths:
-    print(path)
+sites = res.get_sites_list()
+print(sites)
 # TODO: implement the following tests:
 '''
 ***********************
