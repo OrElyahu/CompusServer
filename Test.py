@@ -68,7 +68,7 @@ class Test:
 res = Test()
 sites = res.get_sites_list()
 print(sites)
-# TODO: implement the following tests:
+# TODO: implement automation of the following tests:
 '''
 ***********************
 Rules To Validate:

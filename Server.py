@@ -36,7 +36,7 @@ def refresh_sites():
     parser.add_argument('site_name', type=str, required=True)
     args = parser.parse_args()
     site_name = args['site_name']
-    for doc in db.collection('sites_test').stream():  # TODO change to sites
+    for doc in db.collection('sites').stream():
         if doc.id == site_name:
             site_data = doc.to_dict()
             site = Site('', [], {})
@@ -153,7 +153,6 @@ def shortest_path():
     if not end_graph:
         abort(404, f"Point of interest: {wp_id_dst} not found in {site_name}")
     if start_graph is not end_graph:
-        # TODO: handle multiple graphs
         abort(501, f"Point of interests found in separate locations in {site_name}, "
                    f"navigation between them not implemented yet.")
     graph = start_graph

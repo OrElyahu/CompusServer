@@ -74,7 +74,7 @@ class Admin:
             return 'Graph not found'
         graph.add_wp_between(new_wp, wp_1_id, wp_2_id, t_from_1, t_from_2, a11y_from_1, a11y_from_2)
         self.save_site_to_col(site_obj, col)
-        # TODO: refresh site in Server objects in sites
+        # in case of bug, might need to refresh site in Server objects in sites
 
     ''''
     @param: Site name, Graph name, Waypoint object, image folder path - where images stored
